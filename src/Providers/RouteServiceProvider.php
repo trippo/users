@@ -21,14 +21,26 @@ class RouteServiceProvider extends ServiceProvider
             $router->group(['prefix' => $adminRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
 
                 $router->group(['prefix' => $moduleRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
-                    $router->get('/', 'UserController@getIndex')->name('admin::users.index.get');
-                    $router->post('/', 'UserController@postListing')->name('admin::users.index.post');
+                    $router->get('/', 'UserController@getIndex')
+                        ->name('admin::users.index.get')
+                        ->middleware('has-permission:view-users');
 
-                    $router->post('update-status/{id}/{status}', 'UserController@postUpdateStatus')->name('admin::users.update-status.post');
+                    $router->post('/', 'UserController@postListing')
+                        ->name('admin::users.index.post')
+                        ->middleware('has-permission:view-users');
 
-                    $router->get('create', 'UserController@getCreate')->name('admin::users.create.get');
-                    $router->get('edit/{id}', 'UserController@getEdit')->name('admin::users.edit.get');
-                    $router->post('edit/{id}', 'UserController@postEdit')->name('admin::users.edit.post');
+                    $router->post('update-status/{id}/{status}', 'UserController@postUpdateStatus')
+                        ->name('admin::users.update-status.post')
+                        ->middleware('has-permission:edit-other-users');
+
+                    $router->get('create', 'UserController@getCreate')
+                        ->name('admin::users.create.get')
+                        ->middleware('has-permission:create-users');
+
+                    $router->get('edit/{id}', 'UserController@getEdit')
+                        ->name('admin::users.edit.get');
+                    $router->post('edit/{id}', 'UserController@postEdit')
+                        ->name('admin::users.edit.post');
                 });
 
             });

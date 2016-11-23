@@ -27,8 +27,6 @@ class UserController extends BaseAdminController
 
     public function getIndex()
     {
-        $this->middleware('has-permission:view-users');
-
         $this->assets->addJavascripts('jquery-datatables');
 
         $this->setPageTitle('All users');
@@ -90,8 +88,6 @@ class UserController extends BaseAdminController
      */
     public function postListing(DataTables $dataTable)
     {
-        $this->middleware('has-permission:view-users');
-
         $data = $dataTable
             ->of($this->repository)
             ->with($this->groupAction())
@@ -161,10 +157,15 @@ class UserController extends BaseAdminController
      */
     private function groupAction()
     {
-        $this->middleware('has-permission:edit-other-users');
-
         $data = [];
         if ($this->request->get('customActionType', null) == 'group_action') {
+            if(!$this->repository->hasPermission($this->loggedInUser, 'edit-other-users')) {
+                return [
+                    'customActionMessage' => 'You do not have permission',
+                    'customActionStatus' => 'danger',
+                ];
+            }
+
             $ids = collect($this->request->get('id', []))->filter(function ($value, $index) {
                 return (int)$value !== (int)$this->loggedInUser->id;
             })->toArray();
@@ -189,8 +190,6 @@ class UserController extends BaseAdminController
      */
     public function postUpdateStatus($id, $status)
     {
-        $this->middleware('has-permission:edit-other-users');
-
         $data = [
             'status' => $status
         ];
@@ -204,13 +203,10 @@ class UserController extends BaseAdminController
     }
 
     /**
-     * @param \WebEd\Base\ACL\Repositories\RoleRepository $roleRepository
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreate(RoleContract $roleRepository)
+    public function getCreate()
     {
-        $this->middleware('has-permission:create-user');
-
         $this->setPageTitle('Create user');
         $this->breadcrumbs->addLink('Create user');
 
@@ -248,7 +244,9 @@ class UserController extends BaseAdminController
         $this->dis['isSuperAdmin'] = $this->loggedInUser->isSuperAdmin();
 
         if ((int)$this->loggedInUser->id !== (int)$id) {
-            $this->middleware('has-permission:edit-other-users');
+            if(!$this->repository->hasPermission($this->loggedInUser, 'edit-other-users')) {
+                return redirect()->to(route('admin::error', ['code' => 403]));
+            }
         }
 
         $item = $this->repository->find($id);
@@ -266,7 +264,7 @@ class UserController extends BaseAdminController
 
         $this->dis['object'] = $item;
 
-        if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->loggedInUser->hasPermission('assign-roles'))) {
+        if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->repository->hasPermission($this->loggedInUser, 'assign-roles'))) {
             $roles = $roleRepository->all();
 
             $checkedRoles = $item->roles()->getRelatedIds()->toArray();
@@ -299,10 +297,14 @@ class UserController extends BaseAdminController
     public function postEdit(AssignRolesRequest $assignRolesRequest, $id)
     {
         if ((int)$this->loggedInUser->id !== (int)$id) {
-            $this->middleware('has-permission:edit-other-users');
+            if(!$this->repository->hasPermission($this->loggedInUser, 'edit-other-users')) {
+                return redirect()->to(route('admin::error', ['code' => 403]));
+            }
         }
         if ($this->request->exists('roles')) {
-            $this->middleware('has-role:assign-roles');
+            if(!$this->repository->hasPermission($this->loggedInUser, 'assign-roles')) {
+                return redirect()->to(route('admin::error', ['code' => 403]));
+            }
         }
 
         $data = [];
@@ -353,7 +355,9 @@ class UserController extends BaseAdminController
      */
     private function createUser(array $crossData)
     {
-        $this->middleware('has-permission:create-user');
+        if(!$this->repository->hasPermission($this->loggedInUser, 'create-users')) {
+            return redirect()->to(route('admin::error', ['code' => 403]));
+        }
 
         $data = array_merge($this->request->except([
             '_token', '_continue_edit', '_tab', 'roles',

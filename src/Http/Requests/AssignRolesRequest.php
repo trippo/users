@@ -4,6 +4,8 @@ use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
 use WebEd\Base\ACL\Repositories\RoleRepository;
 use WebEd\Base\Core\Http\Requests\Request;
 use WebEd\Base\Users\Models\EloquentUser;
+use WebEd\Base\Users\Repositories\Contracts\UserContract;
+use WebEd\Base\Users\Repositories\UserRepository;
 
 class AssignRolesRequest extends Request
 {
@@ -24,36 +26,6 @@ class AssignRolesRequest extends Request
     {
         if($this->exists('roles')) {
             $this->roles = $this->get('roles', []);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return EloquentUser
-     */
-    public function getLoggedInUser()
-    {
-        return $this->loggedInUser = $this->user();
-    }
-
-    /**
-     * @return bool
-     */
-    public function loggedInUserIsSuperAdmin()
-    {
-        if($this->loggedInUser->isSuperAdmin()) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function loggedInUserCanAssignRoles()
-    {
-        if($this->loggedInUser->hasPermission('assign-roles')) {
             return true;
         }
         return false;
@@ -93,8 +65,15 @@ class AssignRolesRequest extends Request
             return true;
         }
 
-        if(!$this->loggedInUserIsSuperAdmin()) {
-            if(!$this->loggedInUserCanAssignRoles()) {
+        $loggedInUser = request()->user();
+
+        /**
+         * @var UserRepository $userRepo
+         */
+        $userRepo = app(UserContract::class);
+
+        if(!$userRepo->isSuperAdmin($loggedInUser)) {
+            if(!$userRepo->hasPermission($loggedInUser, 'assign-roles')) {
                 return false;
             }
             /**

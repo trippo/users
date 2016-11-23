@@ -1,6 +1,8 @@
 <?php namespace WebEd\Base\Users\Repositories;
 
 use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
+use WebEd\Base\Users\Models\Contracts\UserModelContract;
+use WebEd\Base\Users\Models\EloquentUser;
 use WebEd\Base\Users\Repositories\Contracts\UserContract;
 
 class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements UserContract
@@ -41,5 +43,34 @@ class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     public function syncRoles($model, $data)
     {
         return $this->afterUpdate(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * @param EloquentUser|int $id
+     * @return bool
+     */
+    public function isSuperAdmin($id)
+    {
+        return $this->beforeGet(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * @param EloquentUser|int $id
+     * @param array ...$permissions
+     * @return bool
+     */
+    public function hasPermission($id, ...$permissions)
+    {
+        return $this->beforeGet(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * @param EloquentUser|int $id
+     * @param array ...$permissions
+     * @return bool
+     */
+    public function hasRole($id, ...$roles)
+    {
+        return $this->beforeGet(__FUNCTION__, func_get_args());
     }
 }

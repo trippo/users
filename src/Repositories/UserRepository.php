@@ -2,6 +2,8 @@
 
 use WebEd\Base\Core\Repositories\AbstractBaseRepository;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
+use WebEd\Base\Users\Models\Contracts\UserModelContract;
+use WebEd\Base\Users\Models\EloquentUser;
 use WebEd\Base\Users\Repositories\Contracts\UserContract;
 
 class UserRepository extends AbstractBaseRepository implements UserContract, CacheableContract
@@ -115,5 +117,76 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
         $result = $this->setMessages('User updated successfully', false, $this::SUCCESS_CODE, $object);
 
         return $result;
+    }
+
+    /**
+     * @param EloquentUser|int $id
+     * @return bool
+     */
+    public function isSuperAdmin($id)
+    {
+        if($id instanceof UserModelContract) {
+            $model = $id;
+        } else {
+            $model = $this->find($id);
+        }
+
+        if(!$model) {
+            return false;
+        }
+
+        if(!$model->isSuperAdmin()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param EloquentUser|int $id
+     * @param array ...$permissions
+     * @return bool
+     */
+    public function hasPermission($id, ...$permissions)
+    {
+        if($id instanceof UserModelContract) {
+            $model = $id;
+        } else {
+            $model = $this->find($id);
+        }
+
+        if(!$model) {
+            return false;
+        }
+
+        if(!$model->hasPermission($permissions)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param EloquentUser|int $id
+     * @param array ...$permissions
+     * @return bool
+     */
+    public function hasRole($id, ...$roles)
+    {
+        if($id instanceof UserModelContract) {
+            $model = $id;
+        } else {
+            $model = $this->find($id);
+        }
+
+        if(!$model) {
+            return false;
+        }
+
+        if(!$model->hasRole($roles)) {
+            return false;
+        }
+
+        return true;
     }
 }
