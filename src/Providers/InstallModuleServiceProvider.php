@@ -32,9 +32,8 @@ class InstallModuleServiceProvider extends ServiceProvider
     {
         acl_permission()
             ->registerPermission('View users', 'view-users', $this->module)
-            ->registerPermission('Create user', 'create-users', $this->module)
-            ->registerPermission('Edit other user', 'edit-other-users', $this->module)
-            ->registerPermission('Delete user', 'delete-users', $this->module)
-            ->registerPermission('Assign roles', 'assign-roles', $this->module);
+            ->registerPermission('Create users', 'create-users', $this->module)
+            ->registerPermission('Edit other users', 'edit-other-users', $this->module)
+            ->registerPermission('Delete users', 'delete-users', $this->module);
     }
 }
