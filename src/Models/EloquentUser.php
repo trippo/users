@@ -27,19 +27,17 @@ class EloquentUser extends BaseModel implements UserModelContract, Authenticatab
 
     /**
      * Get user avatar
-     * @use static->resolved_avatar
      * @return mixed|string
      */
-    public function getResolvedAvatarAttribute($default = null)
+    public function getAvatarAttribute($value)
     {
-        if (isset($this->avatar) && isset($this->sex)) {
-            $defaultAvt = ($default) ? $default : '/admin/images/no-avatar-' . $this->sex . '.jpg';
-            return get_image($this->avatar, $defaultAvt);
+        if (!isset($this->sex)) {
+            $defaultAvt = '/admin/images/no-avatar-other.jpg';
+        } else {
+            $defaultAvt = '/admin/images/no-avatar-' . $this->sex . '.jpg';
         }
-        if ($default) {
-            return $default;
-        }
-        return '/admin/images/no-avatar-other.jpg';
+
+        return get_image($value, $defaultAvt);
     }
 
     /**

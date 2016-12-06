@@ -4,10 +4,9 @@ interface UserModelContract
 {
     /**
      * Get user avatar
-     * @use static->resolved_avatar
      * @return mixed|string
      */
-    public function getResolvedAvatarAttribute($default = null);
+    public function getAvatarAttribute($value);
 
     /**
      * Hash the password before save to database

@@ -92,7 +92,7 @@ class UserController extends BaseAdminController
             ->of($this->repository)
             ->with($this->groupAction())
             ->editColumn('avatar', function ($item) {
-                return '<img src="' . get_image($item->resolved_avatar, '/admin/images/no-avatar-' . $item->sex . '.jpg') . '" width="50" height="50">';
+                return '<img src="' . get_image($item->avatar, '/admin/images/no-avatar-' . $item->sex . '.jpg') . '" width="50" height="50">';
             })
             ->editColumn('id', function ($item) {
                 return form()->customCheckbox([['id[]', $item->id]]);
