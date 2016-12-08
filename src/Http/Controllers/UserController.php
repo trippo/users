@@ -227,8 +227,8 @@ class UserController extends BaseAdminController
         $this->assets
             ->addStylesheets('bootstrap-datepicker')
             ->addJavascripts('bootstrap-datepicker')
-            ->addJavascriptsDirectly(asset('admin/pages/user-profiles/user-profiles.js'))
-            ->addStylesheetsDirectly(asset('admin/pages/user-profiles/user-profiles.css'));
+            ->addJavascriptsDirectly(asset('admin/modules/users/user-profiles/user-profiles.js'))
+            ->addStylesheetsDirectly(asset('admin/modules/users/user-profiles/user-profiles.css'));
 
         return do_filter('users.create.get', $this)->viewAdmin('create');
     }
@@ -283,8 +283,8 @@ class UserController extends BaseAdminController
         $this->assets
             ->addStylesheets('bootstrap-datepicker')
             ->addJavascripts('bootstrap-datepicker')
-            ->addJavascriptsDirectly(asset('admin/pages/user-profiles/user-profiles.js'))
-            ->addStylesheetsDirectly(asset('admin/pages/user-profiles/user-profiles.css'));
+            ->addJavascriptsDirectly(asset('admin/modules/users/user-profiles/user-profiles.js'))
+            ->addStylesheetsDirectly(asset('admin/modules/users/user-profiles/user-profiles.css'));
 
         return do_filter('users.edit.get', $this, $id)->viewAdmin('edit');
     }
