@@ -83,7 +83,7 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
         $resultEditObject = $this->editWithValidate(0, $data, true, false);
 
         if ($resultEditObject['error']) {
-            return $this->setMessages($resultEditObject['messages'], true, $this::ERROR_CODE);
+            return $this->setMessages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
         }
         $object = $resultEditObject['data'];
 
@@ -91,7 +91,7 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
             $this->syncRoles($object, (array)$data['roles']);
         }
 
-        $result = $this->setMessages('User created successfully', false, $this::SUCCESS_CODE, $object);
+        $result = $this->setMessages('User created successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }
@@ -106,7 +106,7 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
         $resultEditObject = $this->editWithValidate($id, $data, false, true);
 
         if ($resultEditObject['error']) {
-            return $this->setMessages($resultEditObject['messages'], true, $this::ERROR_CODE);
+            return $this->setMessages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
         }
         $object = $resultEditObject['data'];
 
@@ -114,7 +114,7 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
             $this->syncRoles($object, (array)$data['roles']);
         }
 
-        $result = $this->setMessages('User updated successfully', false, $this::SUCCESS_CODE, $object);
+        $result = $this->setMessages('User updated successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }
