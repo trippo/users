@@ -23,7 +23,12 @@ class EloquentUser extends BaseModel implements UserModelContract, Authenticatab
         'password', 'remember_token',
     ];
 
-    protected $fillable = ['username', 'email', 'first_name', 'last_name', 'display_name', 'password', 'sex', 'status', 'phone', 'mobile_phone', 'avatar'];
+    protected $fillable = [
+        'username', 'email', 'password',
+        'first_name', 'last_name', 'display_name',
+        'sex', 'status', 'phone', 'mobile_phone', 'avatar',
+        'birthday', 'description', 'disabled_until',
+    ];
 
     /**
      * Get user avatar
