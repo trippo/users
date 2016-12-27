@@ -2,9 +2,10 @@
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
 use WebEd\Base\Core\Http\Controllers\BaseAdminController;
-use WebEd\Base\Core\Support\DataTable\DataTables;
+use WebEd\Base\Users\Http\DataTables\UsersListDataTable;
 use WebEd\Base\Users\Http\Requests\AssignRolesRequest;
 use WebEd\Base\Users\Repositories\Contracts\UserContract;
+use Yajra\Datatables\Engines\BaseEngine;
 
 class UserController extends BaseAdminController
 {
@@ -25,130 +26,25 @@ class UserController extends BaseAdminController
         $this->getDashboardMenu($this->module);
     }
 
-    public function getIndex()
+    public function getIndex(UsersListDataTable $usersListDataTable)
     {
-        $this->assets->addJavascripts('jquery-datatables');
-
         $this->setPageTitle('All users');
 
-        $this->dis['dataTableColumns'] = [
-            'headings' => [
-                ['name' => 'Avatar', 'width' => '1%'],
-                ['name' => 'Username', 'width' => '15%'],
-                ['name' => 'Email', 'width' => '15%'],
-                ['name' => 'Status', 'width' => '5%'],
-                ['name' => 'Created at', 'width' => '5%'],
-                ['name' => 'Roles', 'width' => '10%'],
-                ['name' => 'Actions', 'width' => '10%']
-            ],
-            'filter' => [
-                2 => form()->text('username', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-                3 => form()->email('email', '', [
-                    'class' => 'form-control form-filter input-sm',
-                    'placeholder' => 'Search...'
-                ]),
-                4 => form()->select('status', [
-                    '' => '',
-                    'activated' => 'Activated',
-                    'disabled' => 'Disabled',
-                    'deleted' => 'Deleted',
-                ], '', ['class' => 'form-control form-filter input-sm'])
-            ],
-            'tableActions' => form()->select('', [
-                '' => 'Select...',
-                'activated' => 'Activated',
-                'disabled' => 'Disabled',
-                'deleted' => 'Deleted',
-            ], '', [
-                'class' => 'table-group-action-input form-control input-inline input-small input-sm'
-            ])
-        ];
-
-        $this->dis['dataTableHeadings'] = json_encode([
-            ['data' => 'id', 'name' => 'id', 'searchable' => false, 'orderable' => false],
-            ['data' => 'avatar', 'name' => 'avatar', 'searchable' => false, 'orderable' => false],
-            ['data' => 'username', 'name' => 'username'],
-            ['data' => 'email', 'name' => 'email'],
-            ['data' => 'status', 'name' => 'status'],
-            ['data' => 'created_at', 'name' => 'created_at', 'searchable' => false],
-            ['data' => 'roles', 'name' => 'roles', 'searchable' => false, 'orderable' => false],
-            ['data' => 'actions', 'name' => 'actions', 'searchable' => false, 'orderable' => false],
-        ]);
+        $this->dis['dataTable'] = $usersListDataTable->run();
 
         return do_filter('users.index.get', $this)->viewAdmin('index');
     }
 
     /**
      * Get data for DataTable
-     * @param DataTables $dataTable
+     * @param UsersListDataTable|BaseEngine $usersListDataTable
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postListing(DataTables $dataTable)
+    public function postListing(UsersListDataTable $usersListDataTable)
     {
-        $data = $dataTable
-            ->of($this->repository)
-            ->with($this->groupAction())
-            ->editColumn('avatar', function ($item) {
-                return '<img src="' . get_image($item->avatar, '/admin/images/no-avatar-' . $item->sex . '.jpg') . '" width="50" height="50">';
-            })
-            ->editColumn('id', function ($item) {
-                return form()->customCheckbox([['id[]', $item->id]]);
-            })
-            ->editColumn('status', function ($item) {
-                return html()->label($item->status, $item->status);
-            })
-            ->addColumn('roles', function ($item) {
-                $result = [];
-                $roles = $this->repository->getRoles($item);
-                if ($roles) {
-                    foreach ($roles as $key => $row) {
-                        $result[] = $row->name;
-                    }
-                }
-                return implode(', ', $result);
-            })
-            ->addColumn('actions', function ($item) {
-                /*Edit link*/
-                $activeLink = route('admin::users.update-status.post', ['id' => $item->id, 'status' => 'activated']);
-                $disableLink = route('admin::users.update-status.post', ['id' => $item->id, 'status' => 'disabled']);
-                $deleteLink = route('admin::users.update-status.post', ['id' => $item->id, 'status' => 'deleted']);
+        $data = $usersListDataTable->with($this->groupAction());
 
-                /*Buttons*/
-                $editBtn = link_to(route('admin::users.edit.get', ['id' => $item->id]), 'Edit', ['class' => 'btn btn-outline green btn-sm']);
-                $activeBtn = ($item->status != 'activated') ? form()->button('Active', [
-                    'title' => 'Active this item',
-                    'data-ajax' => $activeLink,
-                    'data-method' => 'POST',
-                    'data-toggle' => 'confirmation',
-                    'class' => 'btn btn-outline blue btn-sm ajax-link',
-                ]) : '';
-                $disableBtn = ($item->status != 'disabled') ? form()->button('Disable', [
-                    'title' => 'Disable this item',
-                    'data-ajax' => $disableLink,
-                    'data-method' => 'POST',
-                    'data-toggle' => 'confirmation',
-                    'class' => 'btn btn-outline yellow-lemon btn-sm ajax-link',
-                ]) : '';
-                $deleteBtn = ($item->status != 'deleted') ? form()->button('Delete', [
-                    'title' => 'Delete this item',
-                    'data-ajax' => $deleteLink,
-                    'data-method' => 'POST',
-                    'data-toggle' => 'confirmation',
-                    'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
-                ]) : '';
-
-                $activeBtn = ($item->status != 'activated') ? $activeBtn : '';
-                $disableBtn = ($item->status != 'disabled') ? $disableBtn : '';
-                $deleteBtn = ($item->status != 'deleted') ? $deleteBtn : '';
-
-                return $editBtn . $activeBtn . $disableBtn . $deleteBtn;
-            });
-
-        return do_filter('datatables.users.index.post', $data, $this)
-            ->make(true);
+        return do_filter('datatables.users.index.post', $data, $this);
     }
 
     /**
