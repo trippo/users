@@ -6,8 +6,16 @@
         <h3 class="profile-username text-center">{{ $object->display_name or '' }}</h3>
         @php
             $status = isset($object->status) ? $object->status : null;
+            try {
+                $deleted = $object->trashed();
+            } catch(Exception $exception) {
+                $deleted = false;
+            }
         @endphp
-        <p class="text-center">{!! $status !== null ? Html::label($status, $status) : '' !!}</p>
+        <p class="text-center">
+            {!! $status !== null ? html()->label($status, $status) : '' !!}
+            {!! $deleted ? html()->label('deleted', 'deleted') : '' !!}
+        </p>
     </div>
     <div class="box-body">
         <b class="control-label">Username</b>

@@ -3,15 +3,15 @@
 use WebEd\Base\Core\Repositories\AbstractBaseRepository;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
-use WebEd\Base\Users\Models\EloquentUser;
-use WebEd\Base\Users\Repositories\Contracts\UserContract;
+use WebEd\Base\Users\Models\User;
+use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
-class UserRepository extends AbstractBaseRepository implements UserContract, CacheableContract
+class UserRepository extends AbstractBaseRepository implements UserRepositoryContract, CacheableContract
 {
     protected $rules = [
         'username' => 'required|between:3,100|string|unique:users|alpha_dash',
         'email' => 'required|between:5,255|email|unique:users',
-        'password' => 'string|required',
+        'password' => 'required|max:60|min:5|string',
         'status' => 'string|required|in:activated,disabled,deleted',
         'display_name' => 'string|between:1,150',
         'first_name' => 'string|between:1,100|required',
@@ -53,7 +53,7 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
     ];
 
     /**
-     * @param \WebEd\Base\Users\Models\EloquentUser $model
+     * @param \WebEd\Base\Users\Models\User $model
      * @param \Illuminate\Database\Eloquent\Collection|array $data
      */
     public function syncRoles($model, $data)
@@ -64,7 +64,7 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
     }
 
     /**
-     * @param \WebEd\Base\Users\Models\EloquentUser $user
+     * @param \WebEd\Base\Users\Models\User $user
      */
     public function getRoles($user)
     {
@@ -87,10 +87,6 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
         }
         $object = $resultEditObject['data'];
 
-        if (isset($data['roles'])) {
-            $this->syncRoles($object, (array)$data['roles']);
-        }
-
         $result = $this->setMessages('User created successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
@@ -110,8 +106,8 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
         }
         $object = $resultEditObject['data'];
 
-        if (isset($data['roles'])) {
-            $this->syncRoles($object, (array)$data['roles']);
+        if (isset($data['roles']) && is_array($data['roles'])) {
+            $this->syncRoles($object, $data['roles']);
         }
 
         $result = $this->setMessages('User updated successfully', false, \Constants::SUCCESS_CODE, $object);
@@ -120,22 +116,22 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
     }
 
     /**
-     * @param EloquentUser|int $id
+     * @param User|int $id
      * @return bool
      */
     public function isSuperAdmin($id)
     {
-        if($id instanceof UserModelContract) {
+        if ($id instanceof UserModelContract) {
             $model = $id;
         } else {
             $model = $this->find($id);
         }
 
-        if(!$model) {
+        if (!$model) {
             return false;
         }
 
-        if(!$model->isSuperAdmin()) {
+        if (!$model->isSuperAdmin()) {
             return false;
         }
 
@@ -143,23 +139,23 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
     }
 
     /**
-     * @param EloquentUser|int $id
+     * @param User|int $id
      * @param array ...$permissions
      * @return bool
      */
     public function hasPermission($id, ...$permissions)
     {
-        if($id instanceof UserModelContract) {
+        if ($id instanceof UserModelContract) {
             $model = $id;
         } else {
             $model = $this->find($id);
         }
 
-        if(!$model) {
+        if (!$model) {
             return false;
         }
 
-        if(!$model->hasPermission($permissions)) {
+        if (!$model->hasPermission($permissions)) {
             return false;
         }
 
@@ -167,23 +163,23 @@ class UserRepository extends AbstractBaseRepository implements UserContract, Cac
     }
 
     /**
-     * @param EloquentUser|int $id
-     * @param array ...$permissions
+     * @param User|int $id
+     * @param array ...$roles
      * @return bool
      */
     public function hasRole($id, ...$roles)
     {
-        if($id instanceof UserModelContract) {
+        if ($id instanceof UserModelContract) {
             $model = $id;
         } else {
             $model = $this->find($id);
         }
 
-        if(!$model) {
+        if (!$model) {
             return false;
         }
 
-        if(!$model->hasRole($roles)) {
+        if (!$model->hasRole($roles)) {
             return false;
         }
 

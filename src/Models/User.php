@@ -1,5 +1,6 @@
 <?php namespace WebEd\Base\Users\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
 use WebEd\Base\Core\Models\EloquentBase as BaseModel;
 
@@ -7,13 +8,15 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use \WebEd\Base\ACL\Models\Traits\EloquentUserAuthorizable;
+use \WebEd\Base\ACL\Models\Traits\UserAuthorizable;
 
-class EloquentUser extends BaseModel implements UserModelContract, AuthenticatableContract, CanResetPasswordContract
+class User extends BaseModel implements UserModelContract, AuthenticatableContract, CanResetPasswordContract
 {
     use Authenticatable, CanResetPassword;
 
-    use EloquentUserAuthorizable;
+    use UserAuthorizable;
+
+    use SoftDeletes;
 
     protected $table = 'users';
 
@@ -52,5 +55,10 @@ class EloquentUser extends BaseModel implements UserModelContract, Authenticatab
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function setUsernameAttribute($value)
+    {
+        $this->attributes['username'] = str_slug($value, '_');
     }
 }

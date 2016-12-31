@@ -1,6 +1,8 @@
 <?php namespace WebEd\Base\Users\Repositories\Contracts;
 
-interface UserContract
+use WebEd\Base\Users\Models\User;
+
+interface UserRepositoryContract
 {
     /**
      * @param array $data
@@ -26,4 +28,18 @@ interface UserContract
      * @return mixed
      */
     public function getRoles($user);
+
+    /**
+     * @param User|int $id
+     * @param array ...$permissions
+     * @return bool
+     */
+    public function hasPermission($id, ...$permissions);
+
+    /**
+     * @param User|int $id
+     * @param array ...$roles
+     * @return bool
+     */
+    public function hasRole($id, ...$roles);
 }

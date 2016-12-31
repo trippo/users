@@ -29,7 +29,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="user_profiles">
-                        {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::users.edit.post', 0)]) !!}
+                        {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::users.create.post')]) !!}
                         {!! Form::hidden('_tab', 'user_profiles') !!}
                         <div class="form-group">
                             <label class="control-label "><b>Display name</b></label>

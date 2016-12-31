@@ -113,32 +113,6 @@
                             ], $selected) !!}
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Status</b></label>
-                            <div class="mt-radio-list">
-                                <label class="mt-radio mt-radio-outline">
-                                    <input type="radio" name="status" value="activated"
-                                        {{ isset($object) ? 'disabled' : '' }}
-                                        {{ (isset($object) && $object->status == 'activated') ? 'checked' : '' }}>
-                                    Activated
-                                    <span></span>
-                                </label>
-                                <label class="mt-radio mt-radio-outline">
-                                    <input type="radio" name="status" value="disabled"
-                                        {{ isset($object) ? 'disabled' : '' }}
-                                        {{ (!isset($object) || $object->status == 'disabled' || !$object->status) ? 'checked' : '' }}>
-                                    Disabled
-                                    <span></span>
-                                </label>
-                                <label class="mt-radio mt-radio-outline">
-                                    <input type="radio" name="status" value="deleted"
-                                        {{ isset($object) ? 'disabled' : '' }}
-                                        {{ (isset($object) && $object->status == 'deleted') ? 'checked' : '' }}>
-                                    Deleted
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label class="control-label"><b>Birthday</b></label>
                             <input type="text"
                                    value="{{ isset($object->birthday) && $object->birthday ? convert_timestamp_format($object->birthday, 'Y-m-d') : '' }}"
@@ -183,19 +157,34 @@
                         {!! Form::close() !!}
                     </div>
                     <div class="tab-pane {{ $curentTab === 'change_password' ? 'active' : '' }}" id="change_password">
-                        {!! Form::open(['class' => 'js-validate-form']) !!}
+                        {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::users.update-password.post', ['id' => $object->id])]) !!}
                         {!! Form::hidden('_tab', 'change_password') !!}
                         <div class="form-group">
                             <label>
                                 <b>New password <span class="text-danger">(*)</span></b>
                             </label>
                             <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-lock"></i>
-                                    </span>
+                                <span class="input-group-addon">
+                                    <i class="fa fa-lock"></i>
+                                </span>
                                 {!! Form::password('password', [
                                     'class' => 'form-control',
                                     'id' => 'password',
+                                    'autocomplete' => 'off',
+                                ]) !!}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <b>Confirmation <span class="text-danger">(*)</span></b>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                                {!! Form::password('password_confirmation', [
+                                    'class' => 'form-control',
+                                    'id' => 'password_confirmation',
                                     'autocomplete' => 'off',
                                 ]) !!}
                             </div>

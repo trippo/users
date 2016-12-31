@@ -34,6 +34,7 @@ class InstallModuleServiceProvider extends ServiceProvider
             ->registerPermission('View users', 'view-users', $this->module)
             ->registerPermission('Create users', 'create-users', $this->module)
             ->registerPermission('Edit other users', 'edit-other-users', $this->module)
-            ->registerPermission('Delete users', 'delete-users', $this->module);
+            ->registerPermission('Delete users', 'delete-users', $this->module)
+            ->registerPermission('Delete users', 'force-delete-users', $this->module);
     }
 }

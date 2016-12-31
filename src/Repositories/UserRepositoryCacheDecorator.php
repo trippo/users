@@ -2,13 +2,13 @@
 
 use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
-use WebEd\Base\Users\Models\EloquentUser;
-use WebEd\Base\Users\Repositories\Contracts\UserContract;
+use WebEd\Base\Users\Models\User;
+use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
-class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements UserContract
+class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements UserRepositoryContract
 {
     /**
-     * @param \WebEd\Base\Users\Models\EloquentUser $user
+     * @param \WebEd\Base\Users\Models\User $user
      */
     public function getRoles($user)
     {
@@ -37,7 +37,7 @@ class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     }
 
     /**
-     * @param \WebEd\Base\Users\Models\EloquentUser $model
+     * @param \WebEd\Base\Users\Models\User $model
      * @param \Illuminate\Database\Eloquent\Collection|array $data
      */
     public function syncRoles($model, $data)
@@ -46,7 +46,7 @@ class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     }
 
     /**
-     * @param EloquentUser|int $id
+     * @param User|int $id
      * @return bool
      */
     public function isSuperAdmin($id)
@@ -55,7 +55,7 @@ class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     }
 
     /**
-     * @param EloquentUser|int $id
+     * @param User|int $id
      * @param array ...$permissions
      * @return bool
      */
@@ -65,7 +65,7 @@ class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
     }
 
     /**
-     * @param EloquentUser|int $id
+     * @param User|int $id
      * @param array ...$permissions
      * @return bool
      */

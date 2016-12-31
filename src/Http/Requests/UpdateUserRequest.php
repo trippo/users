@@ -1,21 +1,33 @@
 <?php namespace WebEd\Base\Users\Http\Requests;
 
-use WebEd\Base\ACL\Repositories\Contracts\RoleContract;
+use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\RoleRepository;
 use WebEd\Base\Core\Http\Requests\Request;
-use WebEd\Base\Users\Models\EloquentUser;
-use WebEd\Base\Users\Repositories\Contracts\UserContract;
+use WebEd\Base\Users\Models\User;
+use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 use WebEd\Base\Users\Repositories\UserRepository;
 
-class AssignRolesRequest extends Request
+class UpdateUserRequest extends Request
 {
+    protected $rules = [
+        'display_name' => 'string|between:1,150',
+        'first_name' => 'string|between:1,100',
+        'last_name' => 'string|between:1,100',
+        'avatar' => 'string|between:1,150',
+        'phone' => 'string|max:20',
+        'mobile_phone' => 'string|max:20',
+        'sex' => 'string|in:male,female,other',
+        'birthday' => 'date_multi_format:Y-m-d H:i:s,Y-m-d|nullable',
+        'description' => 'string|max:1000',
+    ];
+
     /**
      * @var array
      */
     protected $roles = [];
 
     /**
-     * @var EloquentUser
+     * @var User
      */
     protected $loggedInUser;
 
@@ -39,7 +51,7 @@ class AssignRolesRequest extends Request
         /**
          * @var RoleRepository $repo
          */
-        $repo = app(RoleContract::class);
+        $repo = app(RoleRepositoryContract::class);
         $role = $repo
             ->where('slug', '=', 'super-admin')->first();
         if(!$role) {
@@ -65,12 +77,12 @@ class AssignRolesRequest extends Request
             return true;
         }
 
-        $loggedInUser = request()->user();
+        $loggedInUser = $this->user();
 
         /**
          * @var UserRepository $userRepo
          */
-        $userRepo = app(UserContract::class);
+        $userRepo = app(UserRepositoryContract::class);
 
         if(!$userRepo->isSuperAdmin($loggedInUser)) {
             if(!$userRepo->hasPermission($loggedInUser, 'assign-roles')) {
@@ -82,6 +94,7 @@ class AssignRolesRequest extends Request
             $this->roles = array_diff($this->roles, $this->getSuperAdminRole());
             return true;
         }
+
         /**
          * Is super admin
          */
