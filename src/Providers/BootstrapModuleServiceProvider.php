@@ -35,7 +35,7 @@ class BootstrapModuleServiceProvider extends ServiceProvider
          */
         \DashboardMenu::registerItem([
             'id' => 'webed-users',
-            'piority' => 3,
+            'priority' => 3,
             'parent_id' => null,
             'heading' => 'User & ACL',
             'title' => 'Users',
