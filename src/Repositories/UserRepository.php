@@ -140,10 +140,10 @@ class UserRepository extends AbstractBaseRepository implements UserRepositoryCon
 
     /**
      * @param User|int $id
-     * @param array ...$permissions
+     * @param array $permissions
      * @return bool
      */
-    public function hasPermission($id, ...$permissions)
+    public function hasPermission($id, array $permissions)
     {
         if ($id instanceof UserModelContract) {
             $model = $id;
@@ -164,10 +164,10 @@ class UserRepository extends AbstractBaseRepository implements UserRepositoryCon
 
     /**
      * @param User|int $id
-     * @param array ...$roles
+     * @param array $roles
      * @return bool
      */
-    public function hasRole($id, ...$roles)
+    public function hasRole($id, array $roles)
     {
         if ($id instanceof UserModelContract) {
             $model = $id;

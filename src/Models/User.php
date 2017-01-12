@@ -48,6 +48,11 @@ class User extends BaseModel implements UserModelContract, AuthenticatableContra
         return get_image($value, $defaultAvt);
     }
 
+    public function getIdAttribute($value)
+    {
+        return (int)$value;
+    }
+
     /**
      * Hash the password before save to database
      * @param $value

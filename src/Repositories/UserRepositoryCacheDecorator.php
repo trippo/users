@@ -56,20 +56,20 @@ class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator impl
 
     /**
      * @param User|int $id
-     * @param array ...$permissions
+     * @param array $permissions
      * @return bool
      */
-    public function hasPermission($id, ...$permissions)
+    public function hasPermission($id, array $permissions)
     {
         return $this->beforeGet(__FUNCTION__, func_get_args());
     }
 
     /**
      * @param User|int $id
-     * @param array ...$permissions
+     * @param array $roles
      * @return bool
      */
-    public function hasRole($id, ...$roles)
+    public function hasRole($id, array $roles)
     {
         return $this->beforeGet(__FUNCTION__, func_get_args());
     }
