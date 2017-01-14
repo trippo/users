@@ -63,7 +63,7 @@ class UserController extends BaseAdminController
         if ($this->request->get('customActionType', null) == 'group_action') {
             $actionValue = $this->request->get('customActionValue', 'activated');
 
-            if (!$this->repository->hasPermission($this->loggedInUser, 'edit-other-users')) {
+            if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
                 return [
                     'customActionMessage' => 'You do not have permission',
                     'customActionStatus' => 'danger',
@@ -76,7 +76,7 @@ class UserController extends BaseAdminController
 
             switch ($actionValue) {
                 case 'deleted':
-                    if (!$this->repository->hasPermission($this->loggedInUser, 'delete-users')) {
+                    if (!$this->repository->hasPermission($this->loggedInUser, ['delete-users'])) {
                         $data['customActionMessage'] = 'You do not have permission';
                         $data['customActionStatus'] = 'danger';
                         return $data;
@@ -187,7 +187,7 @@ class UserController extends BaseAdminController
         $this->dis['isSuperAdmin'] = $this->loggedInUser->isSuperAdmin();
 
         if ((int)$this->loggedInUser->id !== (int)$id) {
-            if (!$this->repository->hasPermission($this->loggedInUser, 'edit-other-users')) {
+            if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
                 return redirect()->to(route('admin::error', ['code' => 403]));
             }
         }
@@ -207,7 +207,7 @@ class UserController extends BaseAdminController
 
         $this->dis['object'] = $item;
 
-        if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->repository->hasPermission($this->loggedInUser, 'assign-roles'))) {
+        if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->repository->hasPermission($this->loggedInUser, ['assign-roles']))) {
             $roles = $roleRepository->all();
 
             $checkedRoles = $item->roles()->getRelatedIds()->toArray();
@@ -245,12 +245,12 @@ class UserController extends BaseAdminController
         }
 
         if ((int)$this->loggedInUser->id !== (int)$id) {
-            if (!$this->repository->hasPermission($this->loggedInUser, 'edit-other-users')) {
+            if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
                 return redirect()->to(route('admin::error', ['code' => 403]));
             }
         }
         if ($this->request->exists('roles')) {
-            if (!$this->repository->hasPermission($this->loggedInUser, 'assign-roles')) {
+            if (!$this->repository->hasPermission($this->loggedInUser, ['assign-roles'])) {
                 return redirect()->to(route('admin::error', ['code' => 403]));
             }
         }
