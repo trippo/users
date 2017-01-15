@@ -2,12 +2,15 @@
 
 use WebEd\Base\Core\Repositories\AbstractBaseRepository;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
+use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
-class UserRepository extends AbstractBaseRepository implements UserRepositoryContract, CacheableContract
+class UserRepository extends AbstractBaseRepository implements UserRepositoryContract, CacheableContract, UseSoftDeletesContract
 {
+    use \WebEd\Base\Core\Repositories\Traits\UseSoftDeletes;
+
     protected $rules = [
         'username' => 'required|between:3,100|string|unique:users|alpha_dash',
         'email' => 'required|between:5,255|email|unique:users',

@@ -1,12 +1,15 @@
 <?php namespace WebEd\Base\Users\Repositories;
 
 use WebEd\Base\Caching\Repositories\AbstractRepositoryCacheDecorator;
-use WebEd\Base\Users\Models\Contracts\UserModelContract;
+use WebEd\Base\Caching\Repositories\Cache\UseSoftDeletesCache;
+use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
-class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements UserRepositoryContract
+class UserRepositoryCacheDecorator extends AbstractRepositoryCacheDecorator implements UserRepositoryContract, UseSoftDeletesContract
 {
+    use UseSoftDeletesCache;
+
     /**
      * @param \WebEd\Base\Users\Models\User $user
      */
