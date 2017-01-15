@@ -99,7 +99,7 @@ class UsersListDataTable extends AbstractDataTables
                 }
             })
             ->editColumn('avatar', function ($item) {
-                return '<img src="' . $item->avatar . '" width="50" height="50">';
+                return '<img src="' . get_image($item->avatar) . '" width="50" height="50">';
             })
             ->editColumn('id', function ($item) {
                 return form()->customCheckbox([['id[]', $item->id]]);

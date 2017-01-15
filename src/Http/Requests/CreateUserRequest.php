@@ -10,8 +10,8 @@ use WebEd\Base\Users\Repositories\UserRepository;
 class CreateUserRequest extends Request
 {
     protected $rules = [
-        'username' => 'required|between:3,100|string|unique:users|alpha_dash',
-        'email' => 'required|between:5,255|email|unique:users',
+        'username' => 'required|between:3,100|string|alpha_dash',
+        'email' => 'required|between:5,255|email',
         'password' => 'string|required',
         'status' => 'string|required|in:activated,disabled,deleted',
         'display_name' => 'string|between:1,150',

@@ -33,21 +33,6 @@ class User extends BaseModel implements UserModelContract, AuthenticatableContra
         'birthday', 'description', 'disabled_until',
     ];
 
-    /**
-     * Get user avatar
-     * @return mixed|string
-     */
-    public function getAvatarAttribute($value)
-    {
-        if (!isset($this->sex)) {
-            $defaultAvt = '/admin/images/no-avatar-other.jpg';
-        } else {
-            $defaultAvt = '/admin/images/no-avatar-' . $this->sex . '.jpg';
-        }
-
-        return get_image($value, $defaultAvt);
-    }
-
     public function getIdAttribute($value)
     {
         return (int)$value;
