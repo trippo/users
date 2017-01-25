@@ -1,10 +1,6 @@
-<?php use Illuminate\Routing\Router;
-
-/**
- *
- * @var Router $router
- *
- */
+<?php
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 
 $adminRoute = config('webed.admin_route');
 
@@ -13,7 +9,7 @@ $moduleRoute = 'users';
 /*
  * Admin route
  * */
-$router->group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
+Route::group(['prefix' => $adminRoute . '/' . $moduleRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
     $router->get('/', 'UserController@getIndex')
         ->name('admin::users.index.get')
         ->middleware('has-permission:view-users');
