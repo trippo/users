@@ -188,7 +188,7 @@ class UserController extends BaseAdminController
 
         if ((int)$this->loggedInUser->id !== (int)$id) {
             if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
-                return redirect()->to(route('admin::error', ['code' => 403]));
+                abort(\Constants::FORBIDDEN_CODE);
             }
         }
 
@@ -246,12 +246,12 @@ class UserController extends BaseAdminController
 
         if ((int)$this->loggedInUser->id !== (int)$id) {
             if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
-                return redirect()->to(route('admin::error', ['code' => 403]));
+                abort(\Constants::FORBIDDEN_CODE);
             }
         }
         if ($this->request->exists('roles')) {
             if (!$this->repository->hasPermission($this->loggedInUser, ['assign-roles'])) {
-                return redirect()->to(route('admin::error', ['code' => 403]));
+                abort(\Constants::FORBIDDEN_CODE);
             }
         }
 

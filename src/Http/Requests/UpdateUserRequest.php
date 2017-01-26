@@ -10,15 +10,15 @@ use WebEd\Base\Users\Repositories\UserRepository;
 class UpdateUserRequest extends Request
 {
     protected $rules = [
-        'display_name' => 'string|between:1,150',
-        'first_name' => 'string|between:1,100',
-        'last_name' => 'string|between:1,100',
-        'avatar' => 'string|between:1,150',
-        'phone' => 'string|max:20',
-        'mobile_phone' => 'string|max:20',
-        'sex' => 'string|in:male,female,other',
+        'display_name' => 'string|between:1,150|nullable',
+        'first_name' => 'string|between:1,100|required',
+        'last_name' => 'string|between:1,100|nullable',
+        'avatar' => 'string|between:1,150|nullable',
+        'phone' => 'string|max:20|nullable',
+        'mobile_phone' => 'string|max:20|nullable',
+        'sex' => 'string|required|in:male,female,other',
         'birthday' => 'date_multi_format:Y-m-d H:i:s,Y-m-d|nullable',
-        'description' => 'string|max:1000',
+        'description' => 'string|max:1000|nullable',
     ];
 
     /**
@@ -85,7 +85,7 @@ class UpdateUserRequest extends Request
         $userRepo = app(UserRepositoryContract::class);
 
         if(!$userRepo->isSuperAdmin($loggedInUser)) {
-            if(!$userRepo->hasPermission($loggedInUser, 'assign-roles')) {
+            if(!$userRepo->hasPermission($loggedInUser, ['assign-roles'])) {
                 return false;
             }
             /**

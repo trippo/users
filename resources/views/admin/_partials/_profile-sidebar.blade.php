@@ -1,7 +1,7 @@
 <div class="box box-primary">
     <div class="box-body box-profile">
         <img class="profile-user-img img-responsive img-circle"
-             src="{{ $object->avatar or '' }}"
+             src="{{ get_image($object->avatar) }}"
              alt="{{ $object->display_name or '' }}">
         <h3 class="profile-username text-center">{{ $object->display_name or '' }}</h3>
         @php
