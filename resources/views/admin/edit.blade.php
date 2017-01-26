@@ -129,7 +129,7 @@
                                       rows="5">{!! $object->description or '' !!}</textarea>
                         </div>
                         <div class="mt10 text-right">
-                            <button class="btn btn-success" type="submit">
+                            <button class="btn btn-primary" type="submit">
                                 <i class="fa fa-check"></i> Save
                             </button>
                             <button class="btn btn-success" type="submit"
@@ -146,7 +146,7 @@
                             {!! Form::selectImageBox('avatar', (isset($object->avatar) ? $object->avatar : '')) !!}
                         </div>
                         <div class="mt10 text-right">
-                            <button class="btn btn-success" type="submit">
+                            <button class="btn btn-primary" type="submit">
                                 <i class="fa fa-check"></i> Save
                             </button>
                             <button class="btn btn-success" type="submit"
@@ -190,7 +190,7 @@
                             </div>
                         </div>
                         <div class="mt10 text-right">
-                            <button class="btn btn-success" type="submit">
+                            <button class="btn btn-primary" type="submit">
                                 <i class="fa fa-check"></i> Save
                             </button>
                             <button class="btn btn-success" type="submit"
