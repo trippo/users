@@ -210,7 +210,7 @@ class UserController extends BaseAdminController
         if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->repository->hasPermission($this->loggedInUser, ['assign-roles']))) {
             $roles = $roleRepository->all();
 
-            $checkedRoles = $item->roles()->getRelatedIds()->toArray();
+            $checkedRoles = $item->roles()->allRelatedIds()->toArray();
 
             $resolvedRoles = [];
             foreach ($roles as $role) {
