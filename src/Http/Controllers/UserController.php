@@ -232,7 +232,7 @@ class UserController extends BaseAdminController
         return do_filter('users.edit.get', $this, $id)->viewAdmin('edit');
     }
 
-    public function postEdit(UpdateUserRequest $UpdateUserRequest, $id)
+    public function postEdit(UpdateUserRequest $request, $id)
     {
         $user = $this->repository->find($id);
 
@@ -259,8 +259,8 @@ class UserController extends BaseAdminController
             '_token', '_continue_edit', '_tab', 'username', 'email', 'roles'
         ]);
 
-        if ($UpdateUserRequest->requestHasRoles()) {
-            $data['roles'] = $UpdateUserRequest->getResolvedRoles();
+        if ($request->requestHasRoles()) {
+            $data['roles'] = $request->getResolvedRoles();
         } else {
             if ($this->request->get('_tab') === 'roles') {
                 $data['roles'] = [];

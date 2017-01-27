@@ -11,12 +11,12 @@ class UpdateUserRequest extends Request
 {
     protected $rules = [
         'display_name' => 'string|between:1,150|nullable',
-        'first_name' => 'string|between:1,100|required',
+        'first_name' => 'string|between:1,100|nullable',
         'last_name' => 'string|between:1,100|nullable',
         'avatar' => 'string|between:1,150|nullable',
         'phone' => 'string|max:20|nullable',
         'mobile_phone' => 'string|max:20|nullable',
-        'sex' => 'string|required|in:male,female,other',
+        'sex' => 'string|nulable|in:male,female,other',
         'birthday' => 'date_multi_format:Y-m-d H:i:s,Y-m-d|nullable',
         'description' => 'string|max:1000|nullable',
     ];
