@@ -1,15 +1,18 @@
 <?php namespace WebEd\Base\Users\Repositories;
 
-use WebEd\Base\Core\Repositories\AbstractBaseRepository;
+use WebEd\Base\Caching\Services\Traits\Cacheable;
 use WebEd\Base\Caching\Services\Contracts\CacheableContract;
-use WebEd\Base\Core\Repositories\Contracts\UseSoftDeletesContract;
+use WebEd\Base\Core\Repositories\Eloquent\Traits\EloquentUseSoftDeletes;
+use WebEd\Base\Core\Repositories\Eloquent\EloquentBaseRepository;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
-class UserRepository extends AbstractBaseRepository implements UserRepositoryContract, CacheableContract, UseSoftDeletesContract
+class UserRepository extends EloquentBaseRepository implements UserRepositoryContract, CacheableContract
 {
-    use \WebEd\Base\Core\Repositories\Traits\UseSoftDeletes;
+    use Cacheable;
+
+    use EloquentUseSoftDeletes;
 
     protected $rules = [
         'username' => 'required|between:3,100|string|unique:users|alpha_dash',
@@ -86,11 +89,11 @@ class UserRepository extends AbstractBaseRepository implements UserRepositoryCon
         $resultEditObject = $this->editWithValidate(0, $data, true, false);
 
         if ($resultEditObject['error']) {
-            return $this->setMessages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
         }
         $object = $resultEditObject['data'];
 
-        $result = $this->setMessages('User created successfully', false, \Constants::SUCCESS_CODE, $object);
+        $result = response_with_messages('User created successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }
@@ -105,7 +108,7 @@ class UserRepository extends AbstractBaseRepository implements UserRepositoryCon
         $resultEditObject = $this->editWithValidate($id, $data, false, true);
 
         if ($resultEditObject['error']) {
-            return $this->setMessages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
+            return response_with_messages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
         }
         $object = $resultEditObject['data'];
 
@@ -113,7 +116,7 @@ class UserRepository extends AbstractBaseRepository implements UserRepositoryCon
             $this->syncRoles($object, $data['roles']);
         }
 
-        $result = $this->setMessages('User updated successfully', false, \Constants::SUCCESS_CODE, $object);
+        $result = response_with_messages('User updated successfully', false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }

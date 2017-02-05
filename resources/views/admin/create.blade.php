@@ -23,7 +23,7 @@
                     <li class="{{ $curentTab === 'user_profiles' ? 'active' : '' }}">
                         <a data-target="#user_profiles"
                            data-toggle="tab"
-                           href="?_tab=user_profiles"
+                           href="{{ Request::url() }}?_tab=user_profiles"
                            aria-expanded="false">User profiles</a>
                     </li>
                 </ul>

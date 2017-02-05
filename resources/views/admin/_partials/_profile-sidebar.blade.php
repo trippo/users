@@ -20,11 +20,11 @@
     <div class="box-body">
         <b class="control-label">Username</b>
         <div class="text-muted mb20">
-            {{ $object->username or '' }}
+            {{ $object->username or '...' }}
         </div>
         <b class="control-label">Email</b>
         <div class="text-muted mb20">
-            {{ $object->email or '' }}
+            {{ $object->email or '...' }}
         </div>
         <b class="control-label">Sex</b>
         <div class="text-muted mb20">
@@ -32,11 +32,11 @@
         </div>
         <b class="control-label">Phone</b>
         <div class="text-muted mb20">
-            {{ $object->phone or '' }}
+            {{ $object->phone or '...' }}
         </div>
         <b class="control-label">Mobile phone</b>
         <div class="text-muted mb20">
-            {{ $object->mobile_phone or '' }}
+            {{ $object->mobile_phone or '...' }}
         </div>
         <b class="control-label">About me</b>
         <div class="text-muted">

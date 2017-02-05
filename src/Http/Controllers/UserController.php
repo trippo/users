@@ -26,7 +26,7 @@ class UserController extends BaseAdminController
     {
         parent::__construct();
 
-        $this->repository = $userRepository->withTrashed();
+        $this->repository = $userRepository;
         $this->breadcrumbs->addLink('Users', route('admin::users.index.get'));
 
         $this->getDashboardMenu($this->module);
@@ -127,8 +127,6 @@ class UserController extends BaseAdminController
         $this->dis['isLoggedInUser'] = false;
         $this->dis['isSuperAdmin'] = $this->loggedInUser->isSuperAdmin();
 
-        $this->dis['currentId'] = 0;
-
         $this->dis['object'] = $this->repository->getModel();
 
         $oldInputs = old();
@@ -141,8 +139,8 @@ class UserController extends BaseAdminController
         $this->assets
             ->addStylesheets('bootstrap-datepicker')
             ->addJavascripts('bootstrap-datepicker')
-            ->addJavascriptsDirectly(asset('admin/modules/users/user-profiles/user-profiles.js'))
-            ->addStylesheetsDirectly(asset('admin/modules/users/user-profiles/user-profiles.css'));
+            ->addJavascriptsDirectly('admin/modules/users/user-profiles/user-profiles.js')
+            ->addStylesheetsDirectly('admin/modules/users/user-profiles/user-profiles.css');
 
         return do_filter('users.create.get', $this)->viewAdmin('create');
     }
@@ -207,8 +205,8 @@ class UserController extends BaseAdminController
 
         $this->dis['object'] = $item;
 
-        if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->repository->hasPermission($this->loggedInUser, ['assign-roles']))) {
-            $roles = $roleRepository->all();
+        if (!$this->dis['isLoggedInUser'] && ($this->dis['isSuperAdmin'] || $this->loggedInUser->hasPermission(['assign-roles']))) {
+            $roles = $roleRepository->get();
 
             $checkedRoles = $item->roles()->allRelatedIds()->toArray();
 
@@ -221,13 +219,11 @@ class UserController extends BaseAdminController
             $this->dis['roles'] = $resolvedRoles;
         }
 
-        $this->dis['currentId'] = $id;
-
         $this->assets
             ->addStylesheets('bootstrap-datepicker')
             ->addJavascripts('bootstrap-datepicker')
-            ->addJavascriptsDirectly(asset('admin/modules/users/user-profiles/user-profiles.js'))
-            ->addStylesheetsDirectly(asset('admin/modules/users/user-profiles/user-profiles.css'));
+            ->addJavascriptsDirectly('admin/modules/users/user-profiles/user-profiles.js')
+            ->addStylesheetsDirectly('admin/modules/users/user-profiles/user-profiles.css');
 
         return do_filter('users.edit.get', $this, $id)->viewAdmin('edit');
     }
@@ -245,12 +241,12 @@ class UserController extends BaseAdminController
         }
 
         if ((int)$this->loggedInUser->id !== (int)$id) {
-            if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
+            if (!$this->loggedInUser->hasPermission('edit-other-users')) {
                 abort(\Constants::FORBIDDEN_CODE);
             }
         }
         if ($this->request->exists('roles')) {
-            if (!$this->repository->hasPermission($this->loggedInUser, ['assign-roles'])) {
+            if (!$this->loggedInUser->hasPermission('assign-roles')) {
                 abort(\Constants::FORBIDDEN_CODE);
             }
         }

@@ -16,7 +16,7 @@ class UpdateUserRequest extends Request
         'avatar' => 'string|between:1,150|nullable',
         'phone' => 'string|max:20|nullable',
         'mobile_phone' => 'string|max:20|nullable',
-        'sex' => 'string|nulable|in:male,female,other',
+        'sex' => 'string|nullable|in:male,female,other',
         'birthday' => 'date_multi_format:Y-m-d H:i:s,Y-m-d|nullable',
         'description' => 'string|max:1000|nullable',
     ];
@@ -37,7 +37,6 @@ class UpdateUserRequest extends Request
     public function requestHasRoles()
     {
         if($this->exists('roles')) {
-            $this->roles = $this->get('roles', []);
             return true;
         }
         return false;
@@ -53,6 +52,7 @@ class UpdateUserRequest extends Request
          */
         $repo = app(RoleRepositoryContract::class);
         $role = $repo
+            ->withCache(false)
             ->where('slug', '=', 'super-admin')->first();
         if(!$role) {
             return [];
@@ -77,15 +77,15 @@ class UpdateUserRequest extends Request
             return true;
         }
 
-        $loggedInUser = $this->user();
+        $this->roles = $this->get('roles');
 
         /**
-         * @var UserRepository $userRepo
+         * @var User $loggedInUser
          */
-        $userRepo = app(UserRepositoryContract::class);
+        $loggedInUser = $this->user();
 
-        if(!$userRepo->isSuperAdmin($loggedInUser)) {
-            if(!$userRepo->hasPermission($loggedInUser, ['assign-roles'])) {
+        if(!$loggedInUser->isSuperAdmin()) {
+            if(!$loggedInUser->hasPermission('assign-roles')) {
                 return false;
             }
             /**

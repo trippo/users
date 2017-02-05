@@ -43,7 +43,7 @@
                            href="{{ Request::url() }}?_tab=change_password"
                            aria-expanded="false">Password</a>
                     </li>
-                    @if($isLoggedInUser === false)
+                    @if(!$isLoggedInUser && isset($roles))
                         <li class="{{ $curentTab === 'roles' ? 'active' : '' }}">
                             <a data-target="#roles"
                                data-toggle="tab"
@@ -200,7 +200,7 @@
                         </div>
                         {!! Form::close() !!}
                     </div>
-                    @if($isLoggedInUser === false && isset($roles))
+                    @if(!$isLoggedInUser && isset($roles))
                         <div class="tab-pane {{ $curentTab === 'roles' ? 'active' : '' }}" id="roles">
                             {!! Form::open(['class' => 'js-validate-form']) !!}
                             {!! Form::hidden('_tab', 'roles') !!}
@@ -210,7 +210,7 @@
                                      data-always-visible="1"
                                      data-rail-visible1="1">
                                     <div class="pad-top-5 pad-bot-5 pad-left-5">
-                                        {!! isset($roles) ? Form::customCheckbox($roles) : '' !!}
+                                        {!! Form::customCheckbox($roles) !!}
                                     </div>
                                 </div>
                             </div>

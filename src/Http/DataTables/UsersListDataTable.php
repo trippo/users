@@ -2,11 +2,17 @@
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
+use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 use WebEd\Base\Users\Repositories\UserRepository;
 
 class UsersListDataTable extends AbstractDataTables
 {
+    /**
+     * @var User
+     */
+    protected $model;
+
     /**
      * @var UserRepository
      */
@@ -19,10 +25,10 @@ class UsersListDataTable extends AbstractDataTables
 
     public function __construct(UserRepositoryContract $repository)
     {
-        $this->repository = $repository;
-
-        $this->repository->select('id', 'created_at', 'avatar', 'username', 'email', 'status', 'sex', 'deleted_at')
+        $this->model = User::select('id', 'created_at', 'avatar', 'username', 'email', 'status', 'sex', 'deleted_at')
             ->withTrashed();
+
+        $this->repository = $repository;
 
         parent::__construct();
 
@@ -87,7 +93,7 @@ class UsersListDataTable extends AbstractDataTables
      */
     protected function fetch()
     {
-        $this->fetch = datatable()->of($this->repository)
+        $this->fetch = datatable()->of($this->model)
             ->filterColumn('status', function ($query, $keyword) {
                 /**
                  * @var UserRepository $query
@@ -147,13 +153,15 @@ class UsersListDataTable extends AbstractDataTables
                     'data-toggle' => 'confirmation',
                     'class' => 'btn btn-outline yellow-lemon btn-sm ajax-link',
                 ]) : '';
-                $deleteBtn = (!$item->trashed()) ? form()->button('Delete', [
-                    'title' => 'Delete this item',
-                    'data-ajax' => $deleteLink,
-                    'data-method' => 'DELETE',
-                    'data-toggle' => 'confirmation',
-                    'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
-                ]) : form()->button('Force delete', [
+                $deleteBtn = (!$item->trashed())
+                    ? form()->button('Delete', [
+                        'title' => 'Delete this item',
+                        'data-ajax' => $deleteLink,
+                        'data-method' => 'DELETE',
+                        'data-toggle' => 'confirmation',
+                        'class' => 'btn btn-outline red-sunglo btn-sm ajax-link',
+                    ])
+                    : form()->button('Force delete', [
                         'title' => 'Force delete this item',
                         'data-ajax' => $forceDelete,
                         'data-method' => 'DELETE',
