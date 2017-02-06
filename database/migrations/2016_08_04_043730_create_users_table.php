@@ -14,9 +14,11 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_unicode_ci';
             $table->increments('id');
             $table->string('username', 100)->unique();
-            $table->string('email', 190)->unique();
+            $table->string('email')->unique();
             $table->string('password', 60);
             $table->string('display_name', 150);
             $table->string('first_name', 100);
@@ -43,6 +45,8 @@ class CreateUsersTable extends Migration
 
         Schema::create('password_resets', function (Blueprint $table) {
             $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_unicode_ci';
             $table->string('email')->index();
             $table->string('token')->index();
             $table->timestamps();
