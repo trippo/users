@@ -1,17 +1,13 @@
 <?php namespace WebEd\Base\Users\Repositories;
 
-use WebEd\Base\Caching\Services\Traits\Cacheable;
-use WebEd\Base\Caching\Services\Contracts\CacheableContract;
 use WebEd\Base\Core\Repositories\Eloquent\Traits\EloquentUseSoftDeletes;
 use WebEd\Base\Core\Repositories\Eloquent\EloquentBaseRepository;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
-class UserRepository extends EloquentBaseRepository implements UserRepositoryContract, CacheableContract
+class UserRepository extends EloquentBaseRepository implements UserRepositoryContract
 {
-    use Cacheable;
-
     use EloquentUseSoftDeletes;
 
     protected $rules = [
