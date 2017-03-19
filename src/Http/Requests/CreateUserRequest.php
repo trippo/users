@@ -2,7 +2,7 @@
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\RoleRepository;
-use WebEd\Base\Core\Http\Requests\Request;
+use WebEd\Base\Http\Requests\Request;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 use WebEd\Base\Users\Repositories\UserRepository;

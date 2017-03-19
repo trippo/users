@@ -42,9 +42,31 @@ class ModuleProvider extends ServiceProvider
      */
     public function register()
     {
+        config([
+            'auth.defaults' => [
+                'guard' => 'web-admin',
+                'passwords' => 'admin-users',
+            ],
+            'auth.guards.web-admin' => [
+                'driver' => 'session',
+                'provider' => 'admin-users',
+            ],
+            'auth.providers.admin-users' => [
+                'driver' => 'eloquent',
+                'model' => \WebEd\Base\Users\Models\User::class,
+            ],
+            'auth.passwords.admin-users' => [
+                'provider' => 'admin-users',
+                'table' => 'password_resets',
+                'expire' => 60,
+            ],
+        ]);
+
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(MiddlewareServiceProvider::class);
         $this->app->register(RepositoryServiceProvider::class);
         $this->app->register(HookServiceProvider::class);
+        $this->app->register(EventServiceProvider::class);
         $this->app->register(BootstrapModuleServiceProvider::class);
     }
 }

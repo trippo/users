@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\Users\Http\DataTables;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use WebEd\Base\Core\Http\DataTables\AbstractDataTables;
+use WebEd\Base\Http\DataTables\AbstractDataTables;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 use WebEd\Base\Users\Repositories\UserRepository;

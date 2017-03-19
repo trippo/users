@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
-use WebEd\Base\Core\Models\EloquentBase as BaseModel;
+use WebEd\Base\Models\EloquentBase as BaseModel;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;

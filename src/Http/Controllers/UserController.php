@@ -1,7 +1,7 @@
 <?php namespace WebEd\Base\Users\Http\Controllers;
 
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
-use WebEd\Base\Core\Http\Controllers\BaseAdminController;
+use WebEd\Base\Http\Controllers\BaseAdminController;
 use WebEd\Base\Users\Http\DataTables\UsersListDataTable;
 use WebEd\Base\Users\Http\Requests\CreateUserRequest;
 use WebEd\Base\Users\Http\Requests\UpdateUserPasswordRequest;
@@ -65,7 +65,7 @@ class UserController extends BaseAdminController
 
             if (!$this->repository->hasPermission($this->loggedInUser, ['edit-other-users'])) {
                 return [
-                    'customActionMessage' => 'You do not have permission',
+                    'customActionMessage' => trans('webed-acl::base.do_not_have_permission'),
                     'customActionStatus' => 'danger',
                 ];
             }
@@ -77,7 +77,7 @@ class UserController extends BaseAdminController
             switch ($actionValue) {
                 case 'deleted':
                     if (!$this->repository->hasPermission($this->loggedInUser, ['delete-users'])) {
-                        $data['customActionMessage'] = 'You do not have permission';
+                        $data['customActionMessage'] = trans('webed-acl::base.do_not_have_permission');
                         $data['customActionStatus'] = 'danger';
                         return $data;
                     }
@@ -162,7 +162,7 @@ class UserController extends BaseAdminController
 
         $msgType = $result['error'] ? 'danger' : 'success';
 
-        $this->flashMessagesHelper
+        flash_messages()
             ->addMessages($result['messages'], $msgType)
             ->showMessagesOnSession();
 
@@ -193,7 +193,7 @@ class UserController extends BaseAdminController
         $item = $this->repository->find($id);
 
         if (!$item) {
-            $this->flashMessagesHelper
+            flash_messages()
                 ->addMessages('User not found', 'danger')
                 ->showMessagesOnSession();
 
@@ -233,7 +233,7 @@ class UserController extends BaseAdminController
         $user = $this->repository->find($id);
 
         if (!$user) {
-            $this->flashMessagesHelper
+            flash_messages()
                 ->addMessages('User not found', 'danger')
                 ->showMessagesOnSession();
 
@@ -293,7 +293,7 @@ class UserController extends BaseAdminController
     protected function updateUser($user, $data)
     {
         if (!$user) {
-            $this->flashMessagesHelper
+            flash_messages()
                 ->addMessages('User not found', 'danger')
                 ->showMessagesOnSession();
 
@@ -304,7 +304,7 @@ class UserController extends BaseAdminController
 
         $msgType = $result['error'] ? 'danger' : 'success';
 
-        $this->flashMessagesHelper
+        flash_messages()
             ->addMessages($result['messages'], $msgType)
             ->showMessagesOnSession();
 
