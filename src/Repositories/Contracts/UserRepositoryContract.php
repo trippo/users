@@ -30,6 +30,12 @@ interface UserRepositoryContract
     public function getRoles($user);
 
     /**
+     * @param \WebEd\Base\Users\Models\User $user
+     * @return array
+     */
+    public function getRelatedRoleIds($user);
+
+    /**
      * @param User|int $id
      * @param array $permissions
      * @return bool

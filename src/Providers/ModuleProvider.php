@@ -42,6 +42,8 @@ class ModuleProvider extends ServiceProvider
      */
     public function register()
     {
+        load_module_helpers(__DIR__);
+
         config([
             'auth.defaults' => [
                 'guard' => 'web-admin',

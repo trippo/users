@@ -1,5 +1,6 @@
 <?php namespace WebEd\Base\Users\Repositories;
 
+use Illuminate\Support\Collection;
 use WebEd\Base\Repositories\Eloquent\Traits\EloquentUseSoftDeletes;
 use WebEd\Base\Repositories\Eloquent\EloquentBaseRepository;
 use WebEd\Base\Users\Models\Contracts\UserModelContract;
@@ -67,6 +68,7 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
 
     /**
      * @param \WebEd\Base\Users\Models\User $user
+     * @return Collection
      */
     public function getRoles($user)
     {
@@ -74,6 +76,18 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
             return $user->roles()->get();
         }
         return collect([]);
+    }
+
+    /**
+     * @param \WebEd\Base\Users\Models\User $user
+     * @return array
+     */
+    public function getRelatedRoleIds($user)
+    {
+        if ($user) {
+            return $user->roles()->allRelatedIds()->toArray();
+        }
+        return [];
     }
 
     /**
@@ -89,7 +103,7 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
         }
         $object = $resultEditObject['data'];
 
-        $result = response_with_messages('User created successfully', false, \Constants::SUCCESS_CODE, $object);
+        $result = response_with_messages(trans('webed-users::base.user_updated'), false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }
@@ -112,7 +126,7 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
             $this->syncRoles($object, $data['roles']);
         }
 
-        $result = response_with_messages('User updated successfully', false, \Constants::SUCCESS_CODE, $object);
+        $result = response_with_messages(trans('webed-users::base.user_updated'), false, \Constants::SUCCESS_CODE, $object);
 
         return $result;
     }

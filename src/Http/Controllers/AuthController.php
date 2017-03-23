@@ -41,11 +41,6 @@ class AuthController extends BaseController
     public $redirectToLoginPage;
 
     /**
-     * @var \WebEd\Base\AssetsManagement\Assets
-     */
-    protected $assets;
-
-    /**
      * AuthController constructor.
      * @param \WebEd\Base\Users\Repositories\UserRepository $userRepository
      */
@@ -61,18 +56,7 @@ class AuthController extends BaseController
         $this->redirectPath = route('admin::dashboard.index.get');
         $this->redirectToLoginPage = route('admin::auth.login.get');
 
-        $this->assets = \Assets::getAssetsFrom('admin');
-
-        $this->assets
-            ->addStylesheetsDirectly([
-                'admin/theme/lte/css/AdminLTE.min.css',
-                'admin/css/style.css',
-            ])
-            ->addJavascriptsDirectly([
-                'admin/theme/lte/js/app.js',
-                'admin/js/webed-core.js',
-                'admin/js/script.js',
-            ], 'bottom');
+        assets_management()->getAssetsFrom('admin');
     }
 
     /**
@@ -82,7 +66,7 @@ class AuthController extends BaseController
     public function getLogin()
     {
         $this->setBodyClass('login-page');
-        $this->setPageTitle('Login');
+        $this->setPageTitle(trans('webed-users::auth.sign_in'));
 
         return $this->view('admin.auth.login');
     }
@@ -93,9 +77,7 @@ class AuthController extends BaseController
      */
     public function postLogin(AuthRequest $authRequest)
     {
-        //Finish validate request
-
-        return $this->login($this->request);
+        return $this->login($authRequest);
     }
 
     /**

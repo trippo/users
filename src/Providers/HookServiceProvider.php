@@ -12,7 +12,7 @@ class HookServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        add_action('webed-dashboard.index.stat-boxes.get', [RegisterDashboardStats::class, 'handle'], 24);
+        add_action(WEBED_DASHBOARD_STATS, [RegisterDashboardStats::class, 'handle'], 24);
     }
 
     /**

@@ -4,7 +4,10 @@ use WebEd\Base\Http\Requests\Request;
 
 class UpdateUserPasswordRequest extends Request
 {
-    public $rules = [
-        'password' => 'required|max:60|confirmed|min:5|string'
-    ];
+    public function rules()
+    {
+        return [
+            'password' => 'required|max:60|confirmed|min:5|string'
+        ];
+    }
 }

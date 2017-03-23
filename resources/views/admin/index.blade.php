@@ -19,12 +19,12 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">
                         <i class="icon-layers font-dark"></i>
-                        All users
+                        {{ trans('webed-users::base.all_users') }}
                     </h3>
                     <div class="box-tools">
                         <a class="btn green btn-sm"
                            href="{{ route('admin::users.create.get') }}">
-                            <i class="fa fa-plus"></i> Create
+                            <i class="fa fa-plus"></i> {{ trans('webed-core::base.form.create') }}
                         </a>
                     </div>
                 </div>

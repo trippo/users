@@ -24,7 +24,7 @@
                         <a data-target="#user_profiles"
                            data-toggle="tab"
                            href="{{ Request::url() }}?_tab=user_profiles"
-                           aria-expanded="false">User profiles</a>
+                           aria-expanded="false">{{ trans('webed-users::base.user_profiles') }}</a>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -32,93 +32,90 @@
                         {!! Form::open(['class' => 'js-validate-form', 'url' => route('admin::users.create.post')]) !!}
                         {!! Form::hidden('_tab', 'user_profiles') !!}
                         <div class="form-group">
-                            <label class="control-label "><b>Display name</b></label>
-                            <input type="text" value="{{ $object->display_name or '' }}"
+                            <label class="control-label "><b>{{ trans('webed-users::base.display_name') }}</b></label>
+                            <input type="text" value="{{ old('display_name') }}"
                                    name="display_name"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Username</b></label>
-                            <input type="text" value="{{ $object->username or '' }}"
+                            <label class="control-label"><b>{{ trans('webed-users::base.username') }}</b></label>
+                            <input type="text" value="{{ old('username') }}"
                                    name="username"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Email</b></label>
-                            <input type="text" value="{{ $object->email or '' }}"
+                            <label class="control-label"><b>{{ trans('webed-users::base.email') }}</b></label>
+                            <input type="text" value="{{ old('email') }}"
                                    name="email"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label "><b>Password</b></label>
+                            <label class="control-label "><b>{{ trans('webed-users::base.password') }}</b></label>
                             <input type="password" value=""
                                    name="password"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label "><b>First name</b></label>
-                            <input type="text" value="{{ $object->first_name or '' }}"
+                            <label class="control-label "><b>{{ trans('webed-users::base.first_name') }}</b></label>
+                            <input type="text" value="{{ old('first_name') }}"
                                    name="first_name"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Last name</b></label>
-                            <input type="text" value="{{ $object->last_name or '' }}"
+                            <label class="control-label"><b>{{ trans('webed-users::base.last_name') }}</b></label>
+                            <input type="text" value="{{ old('last_name') }}"
                                    name="last_name"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Phone</b></label>
-                            <input type="text" value="{{ $object->phone or '' }}"
+                            <label class="control-label"><b>{{ trans('webed-users::base.phone') }}</b></label>
+                            <input type="text" value="{{ old('phone') }}"
                                    name="phone"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Mobile phone</b></label>
-                            <input type="text" value="{{ $object->mobile_phone or '' }}"
+                            <label class="control-label"><b>{{ trans('webed-users::base.mobile_phone') }}</b></label>
+                            <input type="text" value="{{ old('mobile_phone') }}"
                                    name="mobile_phone"
                                    autocomplete="off"
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Sex</b></label>
-                            @php
-                                $selected = isset($object->sex) ?  $object->sex : 'male';
-                            @endphp
+                            <label class="control-label"><b>{{ trans('webed-users::base.sex') }}</b></label>
                             {!! Form::customRadio('sex', [
-                                ['male', 'Male'],
-                                ['female', 'Female'],
-                                ['other', 'Other'],
-                            ], $selected) !!}
+                                ['male', trans('webed-core::base.sex.male')],
+                                ['female', trans('webed-core::base.sex.female')],
+                                ['other', trans('webed-core::base.sex.other')],
+                            ], old('sex', 'male')) !!}
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Status</b></label>
+                            <label class="control-label"><b>{{ trans('webed-users::base.status') }}</b></label>
                             <div class="mt-radio-list">
                                 <label class="mt-radio mt-radio-outline">
                                     <input type="radio" name="status" value="activated"
-                                        {{ (isset($object) && $object->status == 'activated') ? 'checked' : '' }}>
-                                    Activated
+                                        {{ (old('status') == 'activated') ? 'checked' : '' }}>
+                                    {{ trans('webed-core::base.status.activated') }}
                                     <span></span>
                                 </label>
                                 <label class="mt-radio mt-radio-outline">
                                     <input type="radio" name="status" value="disabled"
-                                        {{ (!isset($object) || $object->status == 'disabled' || !$object->status) ? 'checked' : '' }}>
-                                    Disabled
+                                        {{ (old('status', 'disabled') == 'disabled') ? 'checked' : '' }}>
+                                    {{ trans('webed-core::base.status.disabled') }}
                                     <span></span>
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>Birthday</b></label>
+                            <label class="control-label"><b>{{ trans('webed-users::base.birthday') }}</b></label>
                             <input type="text"
-                                   value="{{ isset($object->birthday) && $object->birthday ? convert_timestamp_format($object->birthday, 'Y-m-d') : '' }}"
+                                   value="{{ old('birthday') }}"
                                    name="birthday"
                                    data-date-format="yyyy-mm-dd"
                                    autocomplete="off"
@@ -126,21 +123,21 @@
                                    class="form-control js-date-picker input-medium"/>
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><b>About</b></label>
+                            <label class="control-label"><b>{{ trans('webed-users::base.description') }}</b></label>
                             <textarea class="form-control"
                                       name="description"
-                                      rows="5">{!! $object->description or '' !!}</textarea>
+                                      rows="5">{!! old('description') !!}</textarea>
                         </div>
                         <div class="form-group">
-                            {!! Form::selectImageBox('avatar', (isset($object->avatar) ? $object->avatar : '')) !!}
+                            {!! Form::selectImageBox('avatar', old('avatar')) !!}
                         </div>
                         <div class="mt10 text-right">
                             <button class="btn btn-primary" type="submit">
-                                <i class="fa fa-check"></i> Save
+                                <i class="fa fa-check"></i> {{ trans('webed-core::base.form.save') }}
                             </button>
                             <button class="btn btn-success" type="submit"
                                     name="_continue_edit" value="1">
-                                <i class="fa fa-check"></i> Save & continue
+                                <i class="fa fa-check"></i> {{ trans('webed-core::base.form.save_and_continue') }}
                             </button>
                         </div>
                         {!! Form::close() !!}

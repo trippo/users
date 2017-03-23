@@ -9,8 +9,11 @@ class AuthRequest extends Request
      *
      * @return array
      */
-    protected $rules = [
-        'username' => 'required',
-        'password' => 'required',
-    ];
+    public function rules()
+    {
+        return [
+            'username' => 'required',
+            'password' => 'required',
+        ];
+    }
 }

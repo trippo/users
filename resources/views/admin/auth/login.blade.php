@@ -24,7 +24,7 @@
             <a href="/"><b>WebEd</b></a>
         </div>
         <div class="login-box-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+            <p class="login-box-msg">{{ trans('webed-users::auth.intro_message') }}</p>
             @if($errors) @foreach($errors as $key => $row)
                 <div class="note note-danger">
                     <p>{{ $row }}</p>
@@ -32,22 +32,22 @@
             @endforeach @endif
             {!! Form::open() !!}
             <div class="form-group has-feedback">
-                {!! Form::text('username', null, ['class' => 'form-control', 'placeholder' => 'Username']) !!}
-                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                {!! Form::text('username', null, ['class' => 'form-control', 'placeholder' => trans('webed-users::auth.username')]) !!}
+                <span class="glyphicon glyphicon-user form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password']) !!}
+                {!! Form::password('password', ['class' => 'form-control', 'placeholder' => trans('webed-users::auth.password')]) !!}
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="row">
                 <div class="col-xs-8">
                     {!! form()->customCheckbox([
-                        ['remember', 1, 'Remember me']
+                        ['remember', 1, trans('webed-users::auth.remember_me')]
                     ]) !!}
                 </div>
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    {!! Form::button('Sign in', ['class' => 'btn btn-primary btn-block btn-flat', 'type' => 'submit']) !!}
+                    {!! Form::button(trans('webed-users::auth.sign_in'), ['class' => 'btn btn-primary btn-block btn-flat', 'type' => 'submit']) !!}
                 </div>
                 <!-- /.col -->
             </div>
