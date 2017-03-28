@@ -9,11 +9,11 @@ use WebEd\Base\Users\Http\Middleware\GuestAdmin;
 class MiddlewareServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * Register any application services.
      *
      * @return void
      */
-    public function boot()
+    public function register()
     {
         /**
          * @var Router $router
@@ -23,15 +23,5 @@ class MiddlewareServiceProvider extends ServiceProvider
         $router->aliasMiddleware('webed.auth-admin', AuthenticateAdmin::class);
         $router->aliasMiddleware('webed.guest-admin', GuestAdmin::class);
         $router->pushMiddlewareToGroup('web', AuthenticateAdmin::class);
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-
     }
 }
