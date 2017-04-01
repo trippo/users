@@ -35,4 +35,5 @@ return [
     'cannot_delete_yourself' => 'Bạn không thể xóa chính mình',
     'cannot_update_status_yourself' => 'Bạn không thể chỉnh sửa hiện trạng của chính mình',
     'user_updated' => 'Cập nhật thông tin người dùng thành công',
+    'user_create_error' => 'Có lỗi xảy ra khi khởi tạo người dùng mới',
 ];

@@ -1,5 +1,6 @@
 <?php namespace WebEd\Base\Users\Http\Controllers;
 
+use Illuminate\Http\Request;
 use WebEd\Base\ACL\Repositories\Contracts\RoleRepositoryContract;
 use WebEd\Base\ACL\Repositories\RoleRepository;
 use WebEd\Base\Http\Controllers\BaseAdminController;
@@ -27,12 +28,21 @@ class UserController extends BaseAdminController
     {
         parent::__construct();
 
-        $this->repository = $userRepository;
-        $this->breadcrumbs->addLink(trans('webed-users::base.users'), route('admin::users.index.get'));
+        $this->middleware(function (Request $request, $next) {
+            $this->breadcrumbs->addLink(trans('webed-users::base.users'), route('admin::users.index.get'));
 
-        $this->getDashboardMenu($this->module);
+            $this->getDashboardMenu($this->module);
+
+            return $next($request);
+        });
+
+        $this->repository = $userRepository;
     }
 
+    /**
+     * @param UsersListDataTable $usersListDataTable
+     * @return mixed
+     */
     public function getIndex(UsersListDataTable $usersListDataTable)
     {
         $this->setPageTitle(trans('webed-users::base.users'));
@@ -83,16 +93,19 @@ class UserController extends BaseAdminController
                         return $data;
                     }
                     $result = $this->repository->delete($ids);
+
+                    do_action(BASE_ACTION_AFTER_DELETE, WEBED_USERS, $ids, $result);
+
                     break;
                 default:
                     $result = $this->repository->updateMultiple($ids, [
                         'status' => $actionValue,
-                    ], true);
+                    ]);
                     break;
             }
 
-            $data['customActionMessage'] = $result['messages'];
-            $data['customActionStatus'] = $result['error'] ? 'danger' : 'success';
+            $data['customActionMessage'] = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.form.error_occurred');
+            $data['customActionStatus'] = !$result ? 'danger' : 'success';
         }
         return $data;
     }
@@ -105,16 +118,16 @@ class UserController extends BaseAdminController
      */
     public function postUpdateStatus($id, $status)
     {
-        $data = [
-            'status' => $status
-        ];
-
         if ($this->loggedInUser->id == $id) {
-            $result = response_with_messages(trans('webed-users::base.cannot_update_status_yourself'), true, \Constants::ERROR_CODE);
+            return response()->json(response_with_messages(trans('webed-users::base.cannot_update_status_yourself'), true, \Constants::ERROR_CODE));
         } else {
-            $result = $this->repository->updateUser($id, $data);
+            $result = $this->repository->updateUser($id, [
+                'status' => $status
+            ]);
         }
-        return response()->json($result, $result['response_code']);
+        $msg = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.form.error_occurred');
+        $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
+        return response()->json(response_with_messages($msg, !$result, $code), $code);
     }
 
     /**
@@ -139,6 +152,10 @@ class UserController extends BaseAdminController
         return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_USERS, 'create.get')->viewAdmin('create');
     }
 
+    /**
+     * @param CreateUserRequest $request
+     * @return \Illuminate\Http\RedirectResponse|mixed
+     */
     public function postCreate(CreateUserRequest $request)
     {
         $data = $request->except([
@@ -154,20 +171,21 @@ class UserController extends BaseAdminController
 
         $result = $this->repository->createUser($data);
 
-        $msgType = $result['error'] ? 'danger' : 'success';
+        $msgType = !$result ? 'danger' : 'success';
+        $msg = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.form.error_occurred');
 
         flash_messages()
-            ->addMessages($result['messages'], $msgType)
+            ->addMessages($msg, $msgType)
             ->showMessagesOnSession();
 
-        if ($result['error']) {
+        if (!$result) {
             return redirect()->back()->withInput();
         }
 
         do_action(BASE_ACTION_AFTER_CREATE, WEBED_USERS, $result);
 
         if ($request->has('_continue_edit')) {
-            return redirect()->to(route('admin::users.edit.get', ['id' => $result['data']->id]));
+            return redirect()->to(route('admin::users.edit.get', ['id' => $result]));
         }
 
         return redirect()->to(route('admin::users.index.get'));
@@ -227,6 +245,11 @@ class UserController extends BaseAdminController
         return do_filter(BASE_FILTER_CONTROLLER, $this, WEBED_USERS, 'edit.get', $id)->viewAdmin('edit');
     }
 
+    /**
+     * @param UpdateUserRequest $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postEdit(UpdateUserRequest $request, $id)
     {
         $user = $this->repository->find($id);
@@ -255,10 +278,10 @@ class UserController extends BaseAdminController
         ]);
 
         if ($request->requestHasRoles()) {
-            $data['roles'] = $request->getResolvedRoles();
+            $roles = $request->getResolvedRoles();
         } else {
             if ($this->request->get('_tab') === 'roles') {
-                $data['roles'] = [];
+                $roles = [];
             }
         }
         if ($this->request->exists('birthday') && !$this->request->get('birthday')) {
@@ -271,15 +294,24 @@ class UserController extends BaseAdminController
         $isLoggedInUser = (int)$this->loggedInUser->id === (int)$id ? true : false;
         if ($isLoggedInUser) {
             if ($this->request->exists('roles')) {
-                unset($data['roles']);
+                $roles = null;
             }
+        }
+
+        if (!isset($roles)) {
+            $roles = null;
         }
 
         $data['updated_by'] = $this->loggedInUser->id;
 
-        return $this->updateUser($user, $data);
+        return $this->updateUser($user, $data, $roles);
     }
 
+    /**
+     * @param UpdateUserPasswordRequest $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postUpdatePassword(UpdateUserPasswordRequest $request, $id)
     {
         $user = $this->repository->find($id);
@@ -289,7 +321,13 @@ class UserController extends BaseAdminController
         ]);
     }
 
-    protected function updateUser($user, $data)
+    /**
+     * @param $user
+     * @param array $data
+     * @param array|null $roles
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function updateUser($user, array $data, $roles = null)
     {
         if (!$user) {
             flash_messages()
@@ -299,15 +337,16 @@ class UserController extends BaseAdminController
             return redirect()->back();
         }
 
-        $result = $this->repository->updateUser($user, $data);
+        $result = $this->repository->updateUser($user, $data, $roles);
 
-        $msgType = $result['error'] ? 'danger' : 'success';
+        $msgType = !$result ? 'danger' : 'success';
+        $msg = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.form.error_occurred');
 
         flash_messages()
-            ->addMessages($result['messages'], $msgType)
+            ->addMessages($msg, $msgType)
             ->showMessagesOnSession();
 
-        if ($result['error']) {
+        if (!$result) {
             return redirect()->back();
         }
 
@@ -320,6 +359,10 @@ class UserController extends BaseAdminController
         return redirect()->to(route('admin::users.index.get'));
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteDelete($id)
     {
         if ($this->loggedInUser->id == $id) {
@@ -329,9 +372,16 @@ class UserController extends BaseAdminController
         }
         do_action(BASE_ACTION_AFTER_DELETE, WEBED_USERS, $id, $result);
 
-        return response()->json($result, $result['response_code']);
+        $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
+        $msg = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.error_occurred');
+
+        return response()->json(response_with_messages($msg, $result, $code), $code);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteForceDelete($id)
     {
         if ($this->loggedInUser->id == $id) {
@@ -340,13 +390,26 @@ class UserController extends BaseAdminController
             $result = $this->repository->forceDelete($id);
         }
         do_action(BASE_ACTION_AFTER_FORCE_DELETE, WEBED_USERS, $id, $result);
-        return response()->json($result, $result['response_code']);
+
+        $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
+        $msg = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.form.error_occurred');
+
+        return response()->json(response_with_messages($msg, $result, $code), $code);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function postRestore($id)
     {
         $result = $this->repository->restore($id);
+
         do_action(BASE_ACTION_AFTER_RESTORE, WEBED_USERS, $id, $result);
-        return response()->json($result, $result['response_code']);
+
+        $code = $result ? \Constants::SUCCESS_NO_CONTENT_CODE : \Constants::ERROR_CODE;
+        $msg = $result ? trans('webed-core::base.form.request_completed') : trans('webed-core::base.form.error_occurred');
+
+        return response()->json(response_with_messages($msg, $result, $code), $code);
     }
 }

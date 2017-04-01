@@ -15,7 +15,7 @@ class UpdateUserRequest extends Request
             'display_name' => 'string|between:1,150|nullable',
             'first_name' => 'string|between:1,100|nullable',
             'last_name' => 'string|between:1,100|nullable',
-            'avatar' => 'string|between:1,150|nullable',
+            'avatar' => 'string|between:1,255|nullable',
             'phone' => 'string|max:20|nullable',
             'mobile_phone' => 'string|max:20|nullable',
             'sex' => 'string|nullable|in:male,female,other',

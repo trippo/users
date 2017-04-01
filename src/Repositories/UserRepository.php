@@ -11,67 +11,33 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
 {
     use EloquentUseSoftDeletes;
 
-    protected $rules = [
-        'username' => 'required|between:3,100|string|unique:users|alpha_dash',
-        'email' => 'required|between:5,255|email|unique:users',
-        'password' => 'required|max:60|min:5|string',
-        'status' => 'string|required|in:activated,disabled,deleted',
-        'display_name' => 'string|between:1,150|nullable',
-        'first_name' => 'string|between:1,100|required',
-        'last_name' => 'string|between:1,100|nullable',
-        'avatar' => 'string|between:1,150|nullable',
-        'phone' => 'string|max:20|nullable',
-        'mobile_phone' => 'string|max:20|nullable',
-        'sex' => 'string|required|in:male,female,other',
-        'birthday' => 'date_multi_format:Y-m-d H:i:s,Y-m-d|nullable',
-        'description' => 'string|max:1000|nullable',
-        'created_by' => 'integer|required|min:0',
-        'updated_by' => 'integer|min:0',
-        'last_login_at' => 'string|date_format:Y-m-d H:i:s',
-        'last_activity_at' => 'string|date_format:Y-m-d H:i:s',
-        'disabled_until' => 'string|date_format:Y-m-d H:i:s',
-        'deleted_at' => 'string|date_format:Y-m-d H:i:s',
-    ];
-
-    protected $editableFields = [
-        'username',
-        'email',
-        'password',
-        'status',
-        'display_name',
-        'first_name',
-        'last_name',
-        'avatar',
-        'phone',
-        'mobile_phone',
-        'sex',
-        'birthday',
-        'description',
-        'created_by',
-        'updated_by',
-        'last_login_at',
-        'last_activity_at',
-        'disabled_until',
-        'deleted_at',
-    ];
-
     /**
-     * @param \WebEd\Base\Users\Models\User $model
-     * @param \Illuminate\Database\Eloquent\Collection|array $data
+     * @param User|int $user
+     * @param array $data
      */
-    public function syncRoles($model, $data)
+    public function syncRoles($user, array $data)
     {
-        $model->roles()->sync($data);
+        if (!$user instanceof User) {
+            $user = $this->find($user);
+        }
+        try {
+            $user->roles()->sync($data);
+        } catch (\Exception $exception) {
+            return false;
+        }
 
-        return $this;
+        return true;
     }
 
     /**
-     * @param \WebEd\Base\Users\Models\User $user
+     * @param User|int $user
      * @return Collection
      */
     public function getRoles($user)
     {
+        if (!$user instanceof User) {
+            $user = $this->find($user);
+        }
         if ($user) {
             return $user->roles()->get();
         }
@@ -79,7 +45,7 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
     }
 
     /**
-     * @param \WebEd\Base\Users\Models\User $user
+     * @param User $user
      * @return array
      */
     public function getRelatedRoleIds($user)
@@ -92,62 +58,48 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
 
     /**
      * @param array $data
-     * @return array
+     * @return int
      */
-    public function createUser(array $data)
+    public function createUser(array $data, array $roles = null)
     {
-        $resultEditObject = $this->editWithValidate(0, $data, true, false);
-
-        if ($resultEditObject['error']) {
-            return response_with_messages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
+        $user = $this->create($data);
+        if ($user && $roles !== null) {
+            $this->syncRoles($user, $roles);
         }
-        $object = $resultEditObject['data'];
-
-        $result = response_with_messages(trans('webed-users::base.user_updated'), false, \Constants::SUCCESS_CODE, $object);
-
-        return $result;
-    }
-
-    /**
-     * @param $id
-     * @param array $data
-     * @return array
-     */
-    public function updateUser($id, array $data)
-    {
-        $resultEditObject = $this->editWithValidate($id, $data, false, true);
-
-        if ($resultEditObject['error']) {
-            return response_with_messages($resultEditObject['messages'], true, \Constants::ERROR_CODE);
-        }
-        $object = $resultEditObject['data'];
-
-        if (isset($data['roles']) && is_array($data['roles'])) {
-            $this->syncRoles($object, $data['roles']);
-        }
-
-        $result = response_with_messages(trans('webed-users::base.user_updated'), false, \Constants::SUCCESS_CODE, $object);
-
-        return $result;
+        return $user;
     }
 
     /**
      * @param User|int $id
+     * @param array $data
+     * @return int
+     */
+    public function updateUser($id, array $data, array $roles = null)
+    {
+        $resultEditObject = $this->update($id, $data);
+
+        if (!$resultEditObject) {
+            return $resultEditObject;
+        }
+
+        if ($roles !== null) {
+            $this->syncRoles($id, $roles);
+        }
+
+        return $resultEditObject;
+    }
+
+    /**
+     * @param User|int $user
      * @return bool
      */
-    public function isSuperAdmin($id)
+    public function isSuperAdmin($user)
     {
-        if ($id instanceof UserModelContract) {
-            $model = $id;
-        } else {
-            $model = $this->find($id);
+        if (!$user instanceof User) {
+            $user = $this->find($user);
         }
 
-        if (!$model) {
-            return false;
-        }
-
-        if (!$model->isSuperAdmin()) {
+        if (!$user || !$user->isSuperAdmin()) {
             return false;
         }
 
@@ -155,23 +107,17 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
     }
 
     /**
-     * @param User|int $id
+     * @param User|int $user
      * @param array $permissions
      * @return bool
      */
-    public function hasPermission($id, array $permissions)
+    public function hasPermission($user, array $permissions)
     {
-        if ($id instanceof UserModelContract) {
-            $model = $id;
-        } else {
-            $model = $this->find($id);
+        if (!$user instanceof User) {
+            $user = $this->find($user);
         }
 
-        if (!$model) {
-            return false;
-        }
-
-        if (!$model->hasPermission($permissions)) {
+        if (!$user || !$user->hasPermission($permissions)) {
             return false;
         }
 
@@ -179,23 +125,17 @@ class UserRepository extends EloquentBaseRepository implements UserRepositoryCon
     }
 
     /**
-     * @param User|int $id
+     * @param User|int $user
      * @param array $roles
      * @return bool
      */
-    public function hasRole($id, array $roles)
+    public function hasRole($user, array $roles)
     {
-        if ($id instanceof UserModelContract) {
-            $model = $id;
-        } else {
-            $model = $this->find($id);
+        if (!$user instanceof User) {
+            $user = $this->find($user);
         }
 
-        if (!$model) {
-            return false;
-        }
-
-        if (!$model->hasRole($roles)) {
+        if (!$user || !$user->hasRole($roles)) {
             return false;
         }
 
