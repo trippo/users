@@ -19,6 +19,7 @@ return [
     'status' => 'Status',
 
     'user_profiles' => 'User profiles',
+    'profile' => 'Profile',
     'avatar' => 'Avatar',
     'password' => 'Password',
     'new_password' => 'New password',
@@ -27,6 +28,7 @@ return [
 
     'users' => 'Users',
     'all_users' => 'All users',
+    'user' => 'User',
 
     'edit_user' => 'Edit user',
     'create_user' => 'Create user',

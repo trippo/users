@@ -19,6 +19,7 @@ return [
     'status' => 'Hiện trạng',
 
     'user_profiles' => 'Hồ sơ',
+    'profile' => 'Hồ sơ',
     'avatar' => 'Ảnh đại diện',
     'password' => 'Mật khẩu',
     'new_password' => 'Mật khẩu mới',
@@ -27,6 +28,7 @@ return [
 
     'users' => 'Người dùng',
     'all_users' => 'Tất cả người dùng',
+    'user' => 'Người dùng',
 
     'edit_user' => 'Chỉnh sửa người dùng',
     'create_user' => 'Thêm mới một người dùng',

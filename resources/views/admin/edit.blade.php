@@ -15,9 +15,9 @@
 @section('content')
     <div class="layout-2columns sidebar-left">
         <div class="column left">
-            @php do_action(BASE_ACTION_META_BOXES, 'top-sidebar', 'webed-users.edit', $object) @endphp
+            @php do_action(BASE_ACTION_META_BOXES, 'top-sidebar', WEBED_USERS . '.edit', $object) @endphp
             @include('webed-users::admin._partials._profile-sidebar')
-            @php do_action(BASE_ACTION_META_BOXES, 'bottom-sidebar', 'webed-users.edit', $object) @endphp
+            @php do_action(BASE_ACTION_META_BOXES, 'bottom-sidebar', WEBED_USERS . '.edit', $object) @endphp
         </div>
         <div class="column main">
             @php
@@ -51,7 +51,7 @@
                                aria-expanded="false">{{ trans('webed-users::base.roles') }}</a>
                         </li>
                     @endif
-                    @php do_action(BASE_ACTION_META_BOXES, 'user-tab-links', 'webed-users.edit', $object) @endphp
+                    @php do_action(BASE_ACTION_META_BOXES, 'user-tab-links', WEBED_USERS . '.edit', $object) @endphp
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane {{ $curentTab === 'user_profiles' ? 'active' : '' }}" id="user_profiles">
@@ -226,10 +226,10 @@
                             {!! Form::close() !!}
                         </div>
                     @endif
-                    @php do_action(BASE_ACTION_META_BOXES, 'user-tab-pane', 'webed-users.edit', $object) @endphp
+                    @php do_action(BASE_ACTION_META_BOXES, 'user-tab-pane', WEBED_USERS . '.edit', $object) @endphp
                 </div>
             </div>
-            @php do_action(BASE_ACTION_META_BOXES, 'main', 'webed-users.edit', $object) @endphp
+            @php do_action(BASE_ACTION_META_BOXES, 'main', WEBED_USERS . '.edit', $object) @endphp
         </div>
     </div>
 @endsection

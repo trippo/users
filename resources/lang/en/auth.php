@@ -7,4 +7,5 @@ return [
     'password' => 'Password',
     'remember_me' => 'Remember me',
     'sign_in' => 'Sign in',
+    'sign_out' => 'Sign out',
 ];

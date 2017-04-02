@@ -88,10 +88,6 @@ class AuthController extends BaseController
     {
         $this->guard()->logout();
 
-        session()->flush();
-
-        session()->regenerate();
-
         return redirect()->to($this->redirectToLoginPage);
     }
 }

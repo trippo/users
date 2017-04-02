@@ -32,7 +32,7 @@
                     {!! $dataTable or '' !!}
                 </div>
             </div>
-            @php do_action(BASE_ACTION_META_BOXES, 'main', 'webed-users.index', null) @endphp
+            @php do_action(BASE_ACTION_META_BOXES, 'main', WEBED_USERS . '.index', null) @endphp
         </div>
     </div>
 @endsection

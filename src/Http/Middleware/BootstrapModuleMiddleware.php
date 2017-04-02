@@ -34,6 +34,12 @@ class BootstrapModuleMiddleware
             'permissions' => ['view-users'],
         ]);
 
+        admin_quick_link()->register('user', [
+            'title' => trans('webed-users::base.user'),
+            'url' => route('admin::users.create.get'),
+            'icon' => 'icon-users',
+        ]);
+
         return $next($request);
     }
 }
