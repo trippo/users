@@ -7,6 +7,7 @@
 <html lang="en">
 <!--<![endif]-->
 <head>
+    <base href="{{ asset('') }}">
     <meta charset="utf-8"/>
     <title>{{ $pageTitle or 'Dashboard' }} | WebEd</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,13 +15,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="Admin dashboard - WebEd" name="description"/>
 
-    <base href="{{ asset('') }}">
-
     {!! \Assets::renderStylesheets() !!}
 
-    <link rel="stylesheet" href="/admin/theme/lte/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="/admin/theme/lte/css/skins/_all-skins.min.css">
-    <link rel="stylesheet" href="/admin/css/style.css">
+    <link rel="stylesheet" href="admin/theme/lte/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="admin/theme/lte/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="admin/css/style.css">
 
     @yield('css')
 
@@ -57,10 +56,10 @@
 <![endif]-->
 
 {{--BEGIN plugins--}}
-<script src="/admin/theme/lte/js/app.js"></script>
-<script src="/admin/js/webed-core.js"></script>
-<script src="/admin/theme/lte/js/demo.js"></script>
-<script src="/admin/js/script.js"></script>
+<script src="admin/theme/lte/js/app.js"></script>
+<script src="admin/js/webed-core.js"></script>
+<script src="admin/theme/lte/js/demo.js"></script>
+<script src="admin/js/script.js"></script>
 {!! \Assets::renderScripts('bottom') !!}
 {{--END plugins--}}
 
