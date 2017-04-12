@@ -11,7 +11,7 @@ class UserLoggedOutListener
      *
      * @return void
      */
-    private $event;
+    protected $event;
 
     /**
      * Handle the event.

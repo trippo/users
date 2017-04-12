@@ -12,7 +12,7 @@ class UserLoggedInListener
      *
      * @return void
      */
-    private $event;
+    protected $event;
 
     /**
      * Handle the event.
@@ -30,7 +30,7 @@ class UserLoggedInListener
     /**
      * Update last logged in
      */
-    private function _updateLastLoggedIn()
+    protected function _updateLastLoggedIn()
     {
         $user = $this->event->user;
         session(['lastLoggedIn' => $user->last_logged_in]);
