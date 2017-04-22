@@ -8,6 +8,8 @@ class AuthenticateAdmin
 
     const LOGIN_ROUTE_NAME_POST = 'admin::auth.login.post';
 
+    const DASHBOARD_CHANGE_LANGUAGE = 'admin::dashboard-language.get';
+
     /**
      * Handle an incoming request.
      *
@@ -19,11 +21,11 @@ class AuthenticateAdmin
     {
         $currentRouteName = $request->route()->getName();
 
-        if ($currentRouteName === $this::LOGIN_ROUTE_NAME_GET || $currentRouteName === $this::LOGIN_ROUTE_NAME_POST) {
+        if ($currentRouteName === $this::LOGIN_ROUTE_NAME_GET || $currentRouteName === $this::LOGIN_ROUTE_NAME_POST || $currentRouteName === $this::DASHBOARD_CHANGE_LANGUAGE) {
             return $next($request);
         }
 
-        if (is_in_dashboard()) {
+        if (is_admin_panel()) {
             if (auth('web-admin')->guest()) {
                 if ($request->ajax() || $request->wantsJson()) {
                     return response('Unauthorized.', \Constants::UNAUTHORIZED_CODE);
