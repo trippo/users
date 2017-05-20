@@ -3,6 +3,7 @@
 use Illuminate\Support\Collection;
 use WebEd\Base\Repositories\Eloquent\Traits\EloquentUseSoftDeletes;
 use WebEd\Base\Repositories\Eloquent\EloquentBaseRepository;
+use WebEd\Base\Users\Models\Contracts\UserModelContract;
 use WebEd\Base\Users\Models\User;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
 
