@@ -33,6 +33,21 @@ class User extends BaseModel implements UserModelContract, AuthenticatableContra
         'birthday', 'description', 'disabled_until',
     ];
 
+    /**
+     * @return mixed|string
+     */
+    public function getUserName()
+    {
+        if ($this->display_name) {
+            return $this->display_name;
+        }
+        return (($this->first_name ? $this->first_name . ' ' : '') . ($this->last_name ?: ''));
+    }
+
+    /**
+     * @param $value
+     * @return int
+     */
     public function getIdAttribute($value)
     {
         return (int)$value;

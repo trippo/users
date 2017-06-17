@@ -29,7 +29,7 @@ class UserController extends BaseAdminController
         parent::__construct();
 
         $this->middleware(function (Request $request, $next) {
-            $this->breadcrumbs->addLink(trans('webed-users::base.users'), route('admin::users.index.get'));
+            $this->breadcrumbs->addLink(trans($this->module . '::base.users'), route('admin::users.index.get'));
 
             $this->getDashboardMenu($this->module);
 
@@ -45,7 +45,7 @@ class UserController extends BaseAdminController
      */
     public function getIndex(UsersListDataTable $usersListDataTable)
     {
-        $this->setPageTitle(trans('webed-users::base.users'));
+        $this->setPageTitle(trans($this->module . '::base.users'));
 
         $this->dis['dataTable'] = $usersListDataTable->run();
 
@@ -119,7 +119,7 @@ class UserController extends BaseAdminController
     public function postUpdateStatus($id, $status)
     {
         if ($this->loggedInUser->id == $id) {
-            return response()->json(response_with_messages(trans('webed-users::base.cannot_update_status_yourself'), true, \Constants::ERROR_CODE));
+            return response()->json(response_with_messages(trans($this->module . '::base.cannot_update_status_yourself'), true, \Constants::ERROR_CODE));
         } else {
             $result = $this->repository->updateUser($id, [
                 'status' => $status
@@ -135,8 +135,8 @@ class UserController extends BaseAdminController
      */
     public function getCreate()
     {
-        $this->setPageTitle(trans('webed-users::base.create_user'));
-        $this->breadcrumbs->addLink(trans('webed-users::base.create_user'));
+        $this->setPageTitle(trans($this->module . '::base.create_user'));
+        $this->breadcrumbs->addLink(trans($this->module . '::base.create_user'));
 
         $this->dis['isLoggedInUser'] = false;
         $this->dis['isSuperAdmin'] = $this->loggedInUser->isSuperAdmin();
@@ -211,14 +211,14 @@ class UserController extends BaseAdminController
 
         if (!$item) {
             flash_messages()
-                ->addMessages(trans('webed-users::base.user_not_found'), 'danger')
+                ->addMessages(trans($this->module . '::base.user_not_found'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->back();
         }
 
-        $this->setPageTitle(trans('webed-users::base.edit_user'), '#' . $id);
-        $this->breadcrumbs->addLink(trans('webed-users::base.edit_user'));
+        $this->setPageTitle(trans($this->module . '::base.edit_user'), '#' . $id);
+        $this->breadcrumbs->addLink(trans($this->module . '::base.edit_user'));
 
         $this->dis['object'] = $item;
 
@@ -256,7 +256,7 @@ class UserController extends BaseAdminController
 
         if (!$user) {
             flash_messages()
-                ->addMessages(trans('webed-users::base.user_not_found'), 'danger')
+                ->addMessages(trans($this->module . '::base.user_not_found'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->back();
@@ -331,7 +331,7 @@ class UserController extends BaseAdminController
     {
         if (!$user) {
             flash_messages()
-                ->addMessages(trans('webed-users::base.user_not_found'), 'danger')
+                ->addMessages(trans($this->module . '::base.user_not_found'), 'danger')
                 ->showMessagesOnSession();
 
             return redirect()->back();
@@ -366,7 +366,7 @@ class UserController extends BaseAdminController
     public function deleteDelete($id)
     {
         if ($this->loggedInUser->id == $id) {
-            $result = response_with_messages(trans('webed-users::base.cannot_delete_yourself'), true, \Constants::ERROR_CODE);
+            $result = response_with_messages(trans($this->module . '::base.cannot_delete_yourself'), true, \Constants::ERROR_CODE);
         } else {
             $result = $this->repository->delete($id);
         }
@@ -385,7 +385,7 @@ class UserController extends BaseAdminController
     public function deleteForceDelete($id)
     {
         if ($this->loggedInUser->id == $id) {
-            $result = response_with_messages(trans('webed-users::base.cannot_delete_yourself'), true, \Constants::ERROR_CODE);
+            $result = response_with_messages(trans($this->module . '::base.cannot_delete_yourself'), true, \Constants::ERROR_CODE);
         } else {
             $result = $this->repository->forceDelete($id);
         }

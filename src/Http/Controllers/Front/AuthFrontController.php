@@ -1,24 +1,18 @@
-<?php namespace WebEd\Base\Users\Http\Controllers;
+<?php namespace WebEd\Base\Users\Http\Controllers\Front;
 
-use WebEd\Base\Users\Http\Requests\AuthRequest;
-use WebEd\Base\Users\Support\Traits\Auth;
-
+use WebEd\Base\Users\Http\Requests\AuthFrontRequest;
 use WebEd\Base\Http\Controllers\BaseController;
 use WebEd\Base\Users\Repositories\Contracts\UserRepositoryContract;
+use WebEd\Base\Users\Support\Traits\Auth;
 
-class AuthController extends BaseController
+class AuthFrontController extends BaseController
 {
     use Auth;
 
     /**
      * @var string
      */
-    protected $module = 'webed-users';
-
-    /**
-     * @var string
-     */
-    public $username = 'username';
+    public $username = 'email';
 
     /**
      * @var string
@@ -50,11 +44,9 @@ class AuthController extends BaseController
 
         $this->repository = $userRepository;
 
-        $this->redirectTo = route('admin::dashboard.index.get');
-        $this->redirectPath = route('admin::dashboard.index.get');
-        $this->redirectToLoginPage = route('admin::auth.login.get');
-
-        assets_management()->getAssetsFrom('admin');
+        $this->redirectTo = $this->request->get('redirect') ? asset($this->request->get('redirect')) : asset('');
+        $this->redirectPath = $this->request->get('redirect') ? asset($this->request->get('redirect')) : asset('');
+        $this->redirectToLoginPage = route('front::auth.login.get');
     }
 
     /**
@@ -64,16 +56,16 @@ class AuthController extends BaseController
     public function getLogin()
     {
         $this->setBodyClass('login-page');
-        $this->setPageTitle(trans($this->module . '::auth.sign_in'));
+        $this->setPageTitle(trans('webed-users::auth.sign_in'));
 
-        return $this->view('admin.auth.login');
+        return $this->view(config('webed-auth.front_actions.login.view') ?: 'webed-users::front.auth.login');
     }
 
     /**
-     * @param AuthRequest $authRequest
+     * @param AuthFrontRequest $authRequest
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
-    public function postLogin(AuthRequest $authRequest)
+    public function postLogin(AuthFrontRequest $authRequest)
     {
         return $this->login($authRequest);
     }
@@ -87,5 +79,16 @@ class AuthController extends BaseController
         $this->guard()->logout();
 
         return redirect()->to($this->redirectToLoginPage);
+    }
+
+    /**
+     * @return array|null|string
+     */
+    public function getFailedLoginMessage()
+    {
+        $failedMessage = 'webed-users::auth.failed';
+        return lang()->has($failedMessage)
+            ? lang()->get($failedMessage)
+            : 'These credentials do not match our records!!!';
     }
 }

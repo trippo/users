@@ -5,8 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    protected $namespace = 'WebEd\Base\Users\Http\Controllers';
-
     public function map()
     {
         Route::middleware('web')

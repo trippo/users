@@ -1,6 +1,6 @@
 @extends('webed-users::admin.auth._auth-actions')
 
-@section('css')
+@section('head')
 
 @endsection
 

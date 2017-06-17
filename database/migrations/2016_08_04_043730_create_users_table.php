@@ -36,7 +36,7 @@ class CreateUsersTable extends Migration
             $table->integer('updated_by')->unsigned()->nullable();
             $table->timestamp('last_login_at')->nullable();
             $table->timestamp('last_activity_at')->nullable();
-            $table->timestamp('disabled_until')->nullable();
+            $table->datetime('disabled_until')->nullable();
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
@@ -47,8 +47,10 @@ class CreateUsersTable extends Migration
             $table->engine = 'InnoDB';
             $table->charset = 'utf8';
             $table->collation = 'utf8_unicode_ci';
+            $table->increments('id');
             $table->string('email')->index();
             $table->string('token')->index();
+            $table->datetime('expired_at');
             $table->timestamps();
         });
     }

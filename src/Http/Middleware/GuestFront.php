@@ -2,7 +2,7 @@
 
 use \Closure;
 
-class GuestAdmin
+class GuestFront
 {
     /**
      * Handle an incoming request.
@@ -13,7 +13,7 @@ class GuestAdmin
     public function handle($request, Closure $next)
     {
         if (auth('web-auth')->check()) {
-            return redirect()->to(route('admin::dashboard.index.get'));
+            return redirect()->to(asset(''));
         }
 
         return $next($request);

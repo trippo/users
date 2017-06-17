@@ -8,4 +8,9 @@ return [
     'remember_me' => 'Remember me',
     'sign_in' => 'Sign in',
     'sign_out' => 'Sign out',
+
+    'forgot_password' => 'Forgot password',
+    'reset_password' => 'Reset password',
+
+    'failed' => 'These credentials do not match our records!!!',
 ];

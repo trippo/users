@@ -45,11 +45,9 @@ trait Auth
             $this->incrementLoginAttempts($request);
         }
 
-        \FlashMessages::addMessages([
-            $this->getFailedLoginMessage(),
-        ], 'danger')
+        flash_messages()
+            ->addMessages($this->getFailedLoginMessage(), 'danger')
             ->showMessagesOnSession();
-
 
         return $this->sendFailedLoginResponse($request);
     }
@@ -67,8 +65,8 @@ trait Auth
     protected function getFailedLoginMessage()
     {
         $failedMessage = $this->module . '::auth.failed';
-        return \Lang::has($failedMessage)
-            ? \Lang::get($failedMessage)
+        return lang()->has($failedMessage)
+            ? lang()->get($failedMessage)
             : 'These credentials do not match our records!!!';
     }
 

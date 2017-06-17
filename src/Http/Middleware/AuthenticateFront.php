@@ -2,13 +2,11 @@
 
 use \Closure;
 
-class AuthenticateAdmin
+class AuthenticateFront
 {
-    const LOGIN_ROUTE_NAME_GET = 'admin::auth.login.get';
+    const LOGIN_ROUTE_NAME_GET = 'front::auth.login.get';
 
-    const LOGIN_ROUTE_NAME_POST = 'admin::auth.login.post';
-
-    const DASHBOARD_CHANGE_LANGUAGE = 'admin::dashboard-language.get';
+    const LOGIN_ROUTE_NAME_POST = 'front::auth.login.post';
 
     /**
      * Handle an incoming request.
@@ -30,8 +28,6 @@ class AuthenticateAdmin
             return redirect()->guest(route($this::LOGIN_ROUTE_NAME_GET));
         }
 
-        dashboard_menu()->setUser($request->user());
-
         set_current_logged_user($request->user());
 
         return $next($request);
@@ -43,7 +39,7 @@ class AuthenticateAdmin
      */
     protected function checkAllowedRoutes($routeName)
     {
-        if ($routeName === $this::LOGIN_ROUTE_NAME_GET || $routeName === $this::LOGIN_ROUTE_NAME_POST || $routeName === $this::DASHBOARD_CHANGE_LANGUAGE) {
+        if ($routeName === $this::LOGIN_ROUTE_NAME_GET || $routeName === $this::LOGIN_ROUTE_NAME_POST) {
             return true;
         }
 

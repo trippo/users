@@ -2,18 +2,19 @@
 
 use \Closure;
 
-class GuestAdmin
+class SetupFrontLoggedInUser
 {
     /**
      * Handle an incoming request.
+     *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if (auth('web-auth')->check()) {
-            return redirect()->to(route('admin::dashboard.index.get'));
+        if ($request->user()) {
+            set_current_logged_user($request->user());
         }
 
         return $next($request);

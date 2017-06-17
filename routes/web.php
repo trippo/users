@@ -9,8 +9,8 @@ $moduleRoute = 'users';
 /*
  * Admin route
  * */
-Route::group(['prefix' => $adminRoute], function (Router $router) use ($adminRoute, $moduleRoute) {
-    Route::group(['prefix' => 'auth'], function (Router $router) use ($adminRoute, $moduleRoute) {
+Route::group(['prefix' => $adminRoute, 'namespace' => 'WebEd\Base\Users\Http\Controllers'], function (Router $router) use ($adminRoute, $moduleRoute) {
+    $router->group(['prefix' => 'auth'], function (Router $router) use ($adminRoute, $moduleRoute) {
         $router->get($moduleRoute, function () use ($adminRoute, $moduleRoute) {
             return redirect()->to($adminRoute . '/' . $moduleRoute . '/login');
         });
@@ -60,5 +60,37 @@ Route::group(['prefix' => $adminRoute], function (Router $router) use ($adminRou
         $router->delete('force-delete/{id}', 'UserController@deleteForceDelete')
             ->name('admin::users.force-delete.delete')
             ->middleware('has-permission:force-delete-users');
+    });
+});
+
+Route::group(['prefix' => 'auth'], function (Router $router) {
+    $router->get('/', function () {
+        return redirect()->to('auth/login');
+    });
+
+    $router->get('logout', config('webed-auth.front_actions.login.controller') . '@getLogout')
+        ->middleware('webed.auth-front')
+        ->name('front::auth.logout.get');
+
+    $router->group(['middleware' => ['webed.guest-front']], function(Router $router) {
+        $router->get('login', config('webed-auth.front_actions.login.controller') . '@getLogin')
+            ->name('front::auth.login.get');
+        $router->post('login', config('webed-auth.front_actions.login.controller') . '@postLogin')
+            ->name('front::auth.login.post');
+
+        $router->get('register', config('webed-auth.front_actions.register.controller') . '@getIndex')
+            ->name('front::auth.register.get');
+        $router->post('register', config('webed-auth.front_actions.register.controller') . '@postIndex')
+            ->name('front::auth.register.post');
+
+        $router->get('forgot-password', config('webed-auth.front_actions.forgot_password.controller') . '@getIndex')
+            ->name('front::auth.forgot_password.get');
+        $router->post('forgot-password', config('webed-auth.front_actions.forgot_password.controller') . '@postIndex')
+            ->name('front::auth.forgot_password.post');
+
+        $router->get('reset-password', config('webed-auth.front_actions.reset_password.controller') . '@getIndex')
+            ->name('front::auth.reset_password.get');
+        $router->post('reset-password', config('webed-auth.front_actions.reset_password.controller') . '@postIndex')
+            ->name('front::auth.reset_password.post');
     });
 });

@@ -2,5 +2,8 @@
 
 interface UserModelContract
 {
-
+    /**
+     * @return string
+     */
+    public function getUserName();
 }

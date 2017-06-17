@@ -50,21 +50,28 @@ class ModuleProvider extends ServiceProvider
     {
         load_module_helpers(__DIR__);
 
+        //Merge configs
+        $configs = split_files_with_basename($this->app['files']->glob(__DIR__ . '/../../config/*.php'));
+
+        foreach ($configs as $key => $row) {
+            $this->mergeConfigFrom($row, $key);
+        }
+
         config([
             'auth.defaults' => [
-                'guard' => 'web-admin',
-                'passwords' => 'admin-users',
+                'guard' => 'web-auth',
+                'passwords' => 'users',
             ],
-            'auth.guards.web-admin' => [
+            'auth.guards.web-auth' => [
                 'driver' => 'session',
-                'provider' => 'admin-users',
+                'provider' => 'users',
             ],
-            'auth.providers.admin-users' => [
+            'auth.providers.users' => [
                 'driver' => 'eloquent',
                 'model' => \WebEd\Base\Users\Models\User::class,
             ],
-            'auth.passwords.admin-users' => [
-                'provider' => 'admin-users',
+            'auth.passwords.users' => [
+                'provider' => 'users',
                 'table' => 'password_resets',
                 'expire' => 60,
             ],
