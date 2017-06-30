@@ -45,10 +45,6 @@ trait Auth
             $this->incrementLoginAttempts($request);
         }
 
-        flash_messages()
-            ->addMessages($this->getFailedLoginMessage(), 'danger')
-            ->showMessagesOnSession();
-
         return $this->sendFailedLoginResponse($request);
     }
 
